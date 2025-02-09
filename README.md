@@ -6,9 +6,9 @@ This repository holds the official Jekyll version of the Clean Blog theme on Sta
 
 ## Preview
 
-[![Clean Blog (Jekyll) Preview](https://startbootstrap.com/assets/img/screenshots/themes/clean-blog-jekyll.png)](http://StartBootstrap.github.io/grupa-gradjana-rasa-jekyll/)
+[![Clean Blog (Jekyll) Preview](https://startbootstrap.com/assets/img/screenshots/themes/clean-blog-jekyll.png)](http://StartBootstrap.github.io/grupa-gradjana-rasa/)
 
-**[View Live Preview](http://StartBootstrap.github.io/grupa-gradjana-rasa-jekyll/)**
+**[View Live Preview](http://StartBootstrap.github.io/grupa-gradjana-rasa/)**
 
 ## Installation & Setup
 
@@ -63,7 +63,7 @@ Assuming there are no errors and the site is building properly, follow these ste
     ---
     ```
 
-    For reference, look at the [demo repository](https://github.com/StartBootstrap/grupa-gradjana-rasa-jekyll) to see how the files are set up.
+    For reference, look at the [demo repository](https://github.com/StartBootstrap/grupa-gradjana-rasa) to see how the files are set up.
 
 5. Add the form to the `contact.html` page. Add the following code to your `contact.html` page:
 
@@ -113,7 +113,7 @@ Assuming there are no errors and the site is building properly, follow these ste
 
 When using the core files, the demo images, posts, and pages are all included with the download. After following the instructions below, you can then go and change the content of the pages and posts.
 
-1. [Download](https://github.com/StartBootstrap/grupa-gradjana-rasa-jekyll/archive/master.zip) or Clone the repository.
+1. [Download](https://github.com/StartBootstrap/grupa-gradjana-rasa/archive/master.zip) or Clone the repository.
 2. Update the following configuration settings in your `_config.yml` file:
 
     * `baseurl`
@@ -132,7 +132,7 @@ When using the core files, the demo images, posts, and pages are all included wi
 
 ## Bugs and Issues
 
-Have a bug or an issue with this template? [Open a new issue](https://github.com/StartBootstrap/grupa-gradjana-rasa-jekyll/issues) here on GitHub!
+Have a bug or an issue with this template? [Open a new issue](https://github.com/StartBootstrap/grupa-gradjana-rasa/issues) here on GitHub!
 
 ## About
 
@@ -151,4 +151,4 @@ Start Bootstrap is based on the [Bootstrap](https://getbootstrap.com/) framework
 
 ## Copyright and License
 
-Copyright 2013-2021 Start Bootstrap LLC. Code released under the [MIT](https://github.com/StartBootstrap/grupa-gradjana-rasa-jekyll/blob/master/LICENSE) license.
+Copyright 2013-2021 Start Bootstrap LLC. Code released under the [MIT](https://github.com/StartBootstrap/grupa-gradjana-rasa/blob/master/LICENSE) license.
