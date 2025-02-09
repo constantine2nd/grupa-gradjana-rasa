@@ -1,8 +1,8 @@
 {
-    "title": "Clean Blog Jekyll",
+    "title": "Grupa građana Raša Jekyll",
     "name": "grupa-gradjana-rasa",
     "version": "4.0.12",
-    "description": "Clean Blog is a Medium inspired blog theme for Bootstrap.",
+    "description": "Grupa građana Raša Internet Portal",
     "keywords": [
         "css",
         "sass",
@@ -11,19 +11,19 @@
         "theme",
         "template"
     ],
-    "homepage": "https://startbootstrap.com/themes/clean-blog-jekyll",
+    "homepage": "https://github.com/constantine2nd/grupa-gradjana-rasa",
     "bugs": {
-        "url": "https://github.com/StartBootstrap/grupa-gradjana-rasa/issues",
-        "email": "feedback@startbootstrap.com"
+        "url": "https://github.com/constantine2nd/grupa-gradjana-rasa/issues",
+        "email": "marko.milic@yahoo.com"
     },
     "license": "MIT",
-    "author": "Start Bootstrap",
+    "author": "Marko Milič",
     "contributors": [
-        "David Miller (http://davidmiller.io/)"
+        "Marko Milič (https://github.com/constantine2nd)"
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/StartBootstrap/grupa-gradjana-rasa.git"
+        "url": "https://github.com/constantine2nd/grupa-gradjana-rasa.git"
     },
     "dependencies": {
         "bootstrap": "4.6.0",
