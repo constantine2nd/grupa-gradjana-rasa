@@ -15,7 +15,7 @@
           // Additional error messages or events
         },
         submitSuccess: function ($form, event) {
-          event.preventDefault(); // Prevent default submit behavior
+          event.preventDefault(); // Prevent default submit behaviour
 
           // Get values from FORM
           var name = $("input#name").val();
@@ -33,16 +33,16 @@
           $this.prop("disabled", true); // Disable submit button until AJAX call is complete
 
           $.ajax({
-            url: "https://script.google.com/macros/s/AKfycbzKwNAKzD2w6jr-4ZAok6AMx0-1-N5TwtzDBTWrIlXVJqIOAyaaPVzCy_8kvMVBaYR1/exec", // Replace with your Google Apps Script Web App URL
+            url: "https://formspree.io/f/mldglzpb",
             type: "POST",
-            data: JSON.stringify({
+            data: {
               name: name,
               phone: phone,
               email: email,
               message: message
-            }),
+            },
             dataType: "json",
-            contentType: "application/json",
+            headers: { "Accept": "application/json" }, // Ensures Formspree responds with JSON
             success: function (response) {
               // Success message
               $("#success").html("<div class='alert alert-success'>");
