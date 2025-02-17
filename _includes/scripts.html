@@ -33,9 +33,11 @@
           $this.prop("disabled", true); // Disable submit button until AJAX call is complete
 
           $.ajax({
-            url: "https://formspree.io/f/mldglzpb",
+            url: "https://script.google.com/macros/s/AKfycbzWrx297ENpTOELDOlRRuSpFtrQlZakafg0g0e4Fy1Hvd6nqYLTNknwlu4tKa6zepk/exec",
             type: "POST",
             data: {
+              to: "marko.milic@yahoo.com",
+              subject: "Grupa građana Raša - Kontakt forma",
               name: name,
               phone: phone,
               email: email,
