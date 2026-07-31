@@ -48,9 +48,9 @@ u `page-javno.tmpl.html`, build neće proći.
 1. U `alat/spisak.py` dodati red u `OWNERS`:
    `("Ime Prezime", ["2945", "2947"], "oba")` — treći član je `"oba"`, `"asfalt"`
    ili `"internet"`.
-2. Ako je nova parcela van opsega brojeva u `fetchgeom.py`, dodati opseg u `ranges`
-   i pokrenuti `python3 alat/fetchgeom.py`. Za nove objekte na parcelama
-   `python3 alat/fetchobjekti.py`.
+2. `python3 alat/fetchgeom.py` — sam pogleda spisak i preuzme **samo parcele kojih
+   u `geoms.json` još nema**. Za jednog novog potpisnika to je jedan zahtev za
+   jednu parcelu. Za nove objekte na parcelama `python3 alat/fetchobjekti.py`.
 3. `python3 alat/napravi.py`
 
 Razvrstavanje po odnosu na put i rastojanja računaju se sama. **Tekst u sekciji
@@ -104,6 +104,27 @@ Kopija metapodataka tog sloja, sa svim kolonama, je u `theme827.json`.
 - `LIKE` ne radi. Za više parcela odjednom: `"comparisonOperator":"ANY"` uz
   `"netType":"string[]"` i niz vrednosti. Prolazi oko 1.400 vrednosti po zahtevu.
 
+## Koliko se podataka uzima
+
+`geoms.json` je nastao jednim širokim prolazom kroz opsege brojeva i u njemu je
+1.152 parcele. Od toga se stvarno koristi 772: 64 sa spiska i 708 susednih, koje
+se na planu crtaju kao tanke sive konture radi orijentacije. Ostalih 380 je
+višak iz tog prvog prolaza.
+
+**Taj široki prolaz se više ne ponavlja sam od sebe.** `fetchgeom.py` bez
+argumenata pita servis samo za parcele sa spiska kojih u `geoms.json` nema — kad
+se javi novi potpisnik, to je jedan zahtev za jednu parcelu. Pun prolaz ostaje
+dostupan, ali se traži izričito:
+
+```bash
+python3 alat/fetchgeom.py              # dopuni po spisku (uobičajeno)
+python3 alat/fetchgeom.py 2945 3011/1  # dopuni i ovim brojevima
+python3 alat/fetchgeom.py --sve        # pun prolaz kroz opsege (~1.150)
+```
+
+`--sve` treba samo ako se plan proširi na novo područje, pa uz nove potpisnike
+zatreba i nov pojas susednih parcela. Za obično dodavanje potpisnika ne treba.
+
 ---
 
 ## Šta gde stoji
@@ -114,7 +135,7 @@ Kopija metapodataka tog sloja, sa svim kolonama, je u `theme827.json`.
 | `spisak.py` | **Spisak potpisnika — ne komituje se** |
 | `spisak.primer.py` | Predložak, sa izmišljenim imenima |
 | `check.py` | Provera parcela jedne po jedne, sa punim odgovorom servisa |
-| `fetchgeom.py` | Masovno preuzimanje geometrija po opsezima brojeva (`ranges`) |
+| `fetchgeom.py` | Geometrije parcela; podrazumevano samo ono što spisku nedostaje |
 | `fetchput.py` | Geometrija puta 7810/1, 7810/2, 7810/3 |
 | `fetchobjekti.py` | Površina pod zgradama, po parceli |
 | `build.py` | Spaja spisak sa geometrijama |
@@ -123,7 +144,7 @@ Kopija metapodataka tog sloja, sa svim kolonama, je u `theme827.json`.
 | `translit.py` | Srpska ćirilica → latinica, samo nad ćiriličnim znakovima |
 | `page.tmpl.html` | Predložak interne stranice; `%%TOKEN%%` popunjava `gen.py` |
 | `page-javno.tmpl.html` | Predložak javne stranice — bez imena i bez tabele |
-| `geoms.json` | 1.152 parcele sa geometrijom (opsezi 2300–3120 i 4600–4720) |
+| `geoms.json` | Geometrije parcela, već preuzete — spisak plus susedne za crtanje |
 | `put.json` | Geometrija puta |
 | `objekti.json` | Zgrade po parceli: broj i ukupna površina |
 | `results.json` | Rezultat provere po parceli, centroidi u WGS84 |
