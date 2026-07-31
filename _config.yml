@@ -3,8 +3,8 @@ email:              marko.milic@yahoo.com
 description:        Internet portal Grupa građana Raša
 keywords:           grupa gradjana Raša, grupa gradjana Rasa, obnova puta Raša, obnova puta, grupa gradjana, grupa građana
 author:             Marko Milić
-baseurl:            ""
-url:                "https://www.karlovackih-vinogradara.site"
+baseurl:            "/grupa-gradjana-rasa"
+url:                "https://constantine2nd.github.io"
 
 # Social Profiles
 twitter_username:   milic_marko
