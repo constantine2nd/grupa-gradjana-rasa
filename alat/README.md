@@ -167,10 +167,35 @@ pod tim imenom. Sloj adresnog registra „Kućni broj"
 parcele, ali vraća `{"success":false,"exception":{"msg":"Dataview access disabled"}}`.
 Kao zamena se koristi sloj „Objekti", koji daje površinu pod zgradama.
 
-**Zvanični REST API.** Isti podaci postoje na
-`rest.geosrbija.rs/api/dkp/v1/parcela` (dokumentacija u `dkp_swagger.json`), ali
-traži token koji se dobija registracijom kod RGZ-a — `nsdi@rgz.gov.rs`. Ako se
-token nabavi, to je stabilniji put od internog servisa korišćenog ovde.
+**Zvanični REST API — provereno, ne dolazi u obzir.** Isti podaci postoje na
+`rest.geosrbija.rs/api/dkp/v1/parcela` (dokumentacija u `dkp_swagger.json`) i na
+novijem v2 API-ju, ali oba su zatvorena za nas:
+
+| | v1 | v2 |
+|---|---|---|
+| Host | `rest.geosrbija.rs` | samo `rest-tmp.geosrbija.rs` (test) |
+| Menadžer naloga | nema ga — 404 | ima, ali test okruženje |
+| Autentifikacija | `x-access-token`, trajni ključ | OAuth2 implicit, token traje minutima |
+
+Katalog servisa navodi „Neophodan RGZID: Ne" i praznu kolonu za naplatu, što
+vara. Odgovor NIGP tima RGZ-a od 31.07.2026. na direktno pitanje:
+
+> Da biste koristili `rest-tmp.geosrbija.rs/rest-geosrbija/` potrebno je da budete
+> profesionalni korisnik RGZ eUsluga. To postajete tako što na `id.rgz.gov.rs/rgzid/`
+> registrujete nalog i podnosite zahtev za identifikacijom ovlašćenog lica
+> (**potrebno je da je firma prijavljena u APR-u**). Nakon odobrenja stičete opštu
+> licencu koja Vam **nakon izvršene uplate servisa** omogućava pristup. Plaćanje se
+> vrši prema Zakonu o republičkim administrativnim taksama, **tarifni broj 215и**.
+
+Znači: pravno lice iz APR-a plus plaćanje. Neformalna grupa građana ne ispunjava
+ni prvi uslov. Uz to, dokumentacija v2 API-ja uz svaki endpoint ponavlja da se
+„podaci dostavljeni demo korisnicima koriste ISKLJUČIVO u testne svrhe", pa se
+njima ne bi smela hraniti javna stranica ni da pristup postoji.
+
+**Put preko opštine.** Jedinice lokalne samouprave jesu u kategoriji kojoj su RGZ
+eUsluge namenjene i **oslobođene su plaćanja takse**. Ako opština Sremski Karlovci
+uđe u inicijativu kao partner, može da povuče iste podatke zvanično i besplatno.
+To je jedini uredan put do zvaničnog izvora za ovaj projekat.
 
 **Deonica koja se traži.** Put 7810/2 je ucrtan ceo, preko 2 km. Koji njegov deo
 inicijativa traži da se asfaltira nije podatak iz katastra i treba ga odlučiti.
