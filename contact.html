@@ -6,6 +6,17 @@ background: '/img/bg-contact.jpg'
 form: true
 ---
 
+{% if site.viber_invite %}
+<p>Najbrže ćete nas dobiti u <strong>Viber grupi</strong> — tamo se dogovaramo oko
+inicijative za asfaltiranje puta i optički internet, i tu se prijavljuju vlasnici
+parcela.</p>
+
+<p><a class="btn btn-primary" href="{{ site.viber_invite }}" target="_blank" rel="noopener">
+Pridružite se Viber grupi</a></p>
+
+<hr>
+{% endif %}
+
 <p>Želite da me kontaktirate? Popunite formular ispod da mi pošaljete poruku, a ja ću Vam odgovoriti što je pre moguće!</p>
 <form name="sentMessage" id="contactForm" novalidate>
   <div class="control-group">
