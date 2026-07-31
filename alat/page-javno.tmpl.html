@@ -1,0 +1,192 @@
+<title>Катастарски план — Раша, Сремски Карловци</title>
+
+<style>
+:root{
+  --paper:#e9ebe4; --card:#f6f7f2; --ink:#161b17; --muted:#656b63;
+  --rule:#ccd1c7; --rule-soft:#dde1d7;
+  --onroad:#2f6a52; --behind:#35618d; --off:#a8451f;
+  --road:#3a3f38; --ctx:#b9bfb3;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular","SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#121511; --card:#1a1e19; --ink:#e3e8df; --muted:#8f968b;
+    --rule:#2e352c; --rule-soft:#242a22;
+    --onroad:#5faa87; --behind:#78a6d6; --off:#e08a63;
+    --road:#c2cbbd; --ctx:#3a4237;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121511; --card:#1a1e19; --ink:#e3e8df; --muted:#8f968b;
+  --rule:#2e352c; --rule-soft:#242a22;
+  --onroad:#5faa87; --behind:#78a6d6; --off:#e08a63;
+  --road:#c2cbbd; --ctx:#3a4237;
+}
+:root[data-theme="light"]{
+  --paper:#e9ebe4; --card:#f6f7f2; --ink:#161b17; --muted:#656b63;
+  --rule:#ccd1c7; --rule-soft:#dde1d7;
+  --onroad:#2f6a52; --behind:#35618d; --off:#a8451f;
+  --road:#3a3f38; --ctx:#b9bfb3;
+}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+  line-height:1.55;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1060px;margin:0 auto;padding:clamp(28px,5vw,60px) clamp(18px,4vw,32px) 72px;
+  display:flex;flex-direction:column;gap:clamp(26px,4vw,38px);}
+
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.08;letter-spacing:-.021em;
+  font-weight:700;text-wrap:balance;margin:0;}
+p{margin:0;max-width:64ch;}
+.lede{font-size:clamp(15.5px,1.9vw,17.5px);color:var(--muted);}
+
+header{display:flex;flex-direction:column;gap:13px;}
+header .rule{height:2px;background:var(--ink);width:52px;}
+
+.facts{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+.fact{background:var(--card);padding:15px 18px 17px;display:flex;flex-direction:column;gap:3px;}
+.fact b{font-family:var(--mono);font-size:clamp(22px,3.2vw,30px);font-weight:600;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.05;}
+.fact span{font-size:12.5px;color:var(--muted);}
+
+.mapbox{border:1px solid var(--rule);background:var(--card);
+  display:flex;flex-direction:column;}
+.maptools{display:flex;flex-wrap:wrap;gap:8px;padding:11px 13px;
+  border-bottom:1px solid var(--rule-soft);align-items:center;}
+button{font:inherit;font-size:12.5px;font-family:var(--mono);letter-spacing:.03em;
+  background:transparent;color:var(--muted);border:1px solid var(--rule);
+  padding:5px 11px;cursor:pointer;border-radius:2px;}
+button:hover{color:var(--ink);border-color:var(--ink);}
+button:focus-visible{outline:2px solid var(--onroad);outline-offset:2px;}
+button.on{color:var(--paper);background:var(--ink);border-color:var(--ink);}
+.hint{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto;}
+.plan{display:block;width:100%;height:min(80vh,780px);touch-action:none;cursor:grab;
+  background:var(--card);}
+.plan.drag{cursor:grabbing;}
+.plan .ctx path{fill:none;stroke:var(--ctx);stroke-width:.9;vector-effect:non-scaling-stroke;}
+.plan .s{stroke:var(--paper);stroke-width:1;vector-effect:non-scaling-stroke;fill-opacity:.82;}
+.plan .s.onroad{fill:var(--onroad);} .plan .s.behind{fill:var(--behind);}
+.plan .s.off{fill:var(--off);}
+.plan .road path{fill:var(--road);fill-opacity:.9;stroke:var(--road);
+  stroke-width:1.4;vector-effect:non-scaling-stroke;}
+.plan .lbl text{font-family:var(--mono);font-size:9px;fill:var(--ink);
+  text-anchor:middle;dominant-baseline:middle;paint-order:stroke;
+  stroke:var(--card);stroke-width:2.6px;stroke-linejoin:round;}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 14px;
+  border-top:1px solid var(--rule-soft);font-size:12.5px;color:var(--muted);}
+.legend i{display:inline-block;width:11px;height:11px;margin-right:7px;
+  vertical-align:-1px;border-radius:1px;}
+.legend span{white-space:nowrap;}
+
+.note{border-top:1px solid var(--rule);padding-top:15px;
+  display:flex;flex-direction:column;gap:9px;}
+.note p{font-size:13.5px;color:var(--muted);max-width:72ch;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="rule"></div>
+  <div class="eyebrow">КО Сремски Карловци · матични број 805408</div>
+  <h1>Катастарски план</h1>
+  <p class="lede">Парцеле пријављене за иницијативу за асфалтирање пута и увођење
+     интернета у Раши, и пут <b>7810/2</b> на који излазе. Подаци су из дигиталног
+     катастарског плана Републичког геодетског завода.</p>
+</header>
+
+<section>
+  <div class="facts">
+    <div class="fact"><b>%%NTOTAL%%</b><span>парцела на списку</span></div>
+    <div class="fact"><b>%%TOTHA%%</b><span>хектара укупно (%%TOTM2%% m²)</span></div>
+    <div class="fact"><b>%%ROADM2%%</b><span>m² пут 7810/2, преко 2 km</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="mapbox">
+    <div class="maptools">
+      <button type="button" data-v="all" class="on">Све</button>
+      <button type="button" data-v="onroad">Уз пут</button>
+      <button type="button" data-v="off">Ван трасе</button>
+      <span class="hint">точкић = зум · превуци = помери</span>
+    </div>
+    <svg class="plan" id="plan" viewBox="0 0 %%W%% %%H%%" preserveAspectRatio="xMidYMid meet"
+         role="img" aria-label="Катастарски план парцела и пута 7810/2">
+      <g class="ctx">%%CTX%%</g>
+      <g class="road">%%ROAD%%</g>
+      <g class="sig">%%SIG%%</g>
+      <g class="lbl">%%LBL%%</g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:var(--road)"></i>Пут 7810/2</span>
+      <span><i style="background:var(--onroad)"></i>Излази на пут — %%NONROAD%%</span>
+      <span><i style="background:var(--behind)"></i>Залеђе, до %%MAXBEHIND%% m — %%NBEHIND%%</span>
+      <span><i style="background:var(--off)"></i>Ван трасе — %%NOFF%%</span>
+      <span><i style="background:var(--ctx)"></i>Суседне парцеле</span>
+    </div>
+  </div>
+</section>
+
+<section class="note">
+  <div class="eyebrow">О плану</div>
+  <p>Сиве су суседне парцеле из катастра (%%NCTX%% комада), да се види како трасa
+     пута пролази кроз атар. Тамна трака кроз средину је сам пут. Клик на парцелу
+     показује њен број и површину.</p>
+  <p>Растојање до пута мерено је од ивице парцеле до ивице пута. Парцеле означене
+     као „ван трасе" удаљене су од %%MINOFF%% до %%MAXOFF%% m — до њих се не долази
+     овим путем.</p>
+  <p>Извор: дигитални катастарски план РГЗ-а, стање %%DATUM%%. План приказује
+     парцеле, не и деоницу која се тражи за асфалтирање — то тек треба одредити.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var svg=document.getElementById('plan');
+  var W=%%W%%, H=%%H%%;
+  var VIEWS={all:%%VALL%%, onroad:%%VONROAD%%, off:%%VOFF%%};
+  var vb=VIEWS.all.slice();
+  function apply(){svg.setAttribute('viewBox',vb.map(function(n){return n.toFixed(1);}).join(' '));}
+  document.querySelectorAll('.maptools button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.maptools button').forEach(function(o){o.classList.remove('on');});
+      b.classList.add('on');
+      vb=VIEWS[b.dataset.v].slice(); apply();
+    });
+  });
+  svg.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var r=svg.getBoundingClientRect();
+    var s=Math.max(vb[2]/r.width,vb[3]/r.height);
+    var mx=vb[0]+vb[2]/2+(e.clientX-r.left-r.width/2)*s;
+    var my=vb[1]+vb[3]/2+(e.clientY-r.top-r.height/2)*s;
+    var k=e.deltaY>0?1.14:1/1.14;
+    var nw=Math.min(W*1.6,Math.max(W/60,vb[2]*k));
+    var nh=nw*(vb[3]/vb[2]);
+    vb[0]=mx-(mx-vb[0])*(nw/vb[2]);
+    vb[1]=my-(my-vb[1])*(nh/vb[3]);
+    vb[2]=nw; vb[3]=nh; apply();
+  },{passive:false});
+  var dragging=false,lx=0,ly=0;
+  svg.addEventListener('pointerdown',function(e){
+    dragging=true;lx=e.clientX;ly=e.clientY;svg.classList.add('drag');
+    svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener('pointermove',function(e){
+    if(!dragging)return;
+    var r=svg.getBoundingClientRect();
+    var s=Math.max(vb[2]/r.width,vb[3]/r.height);
+    vb[0]-=(e.clientX-lx)*s; vb[1]-=(e.clientY-ly)*s;
+    lx=e.clientX;ly=e.clientY;apply();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+    svg.addEventListener(ev,function(){dragging=false;svg.classList.remove('drag');});
+  });
+  apply();
+})();
+</script>

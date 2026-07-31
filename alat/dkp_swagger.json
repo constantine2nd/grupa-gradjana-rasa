@@ -1,0 +1,509 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "description": "SwaggerHub API Auto Mocking",
+      "url": "https://rest.geosrbija.rs/api/dkp/v1"
+    }
+  ],
+  "info": {
+    "description": "Ova stranica predstavlja dokumentaciju REST servisa digitalnog katastarskog plana Republike Srbije. Servis je razvijan u okviru Centra za upravljanje geoprostornim podacima. Više o ovom servisu, kao i o ostalim koje nudi CUGP, možete videti na \n[geosrbija.rs](https://geosrbija.rs), dok setove podataka možete pogledati na\n[a3.geosrbija.rs](https://a3.geosrbija.rs).\n",
+    "version": "1",
+    "title": "REST API digitalnog katastarskog plana",
+    "termsOfService": "",
+    "contact": {
+      "email": "nsdi@rgz.gov.rs"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "tags": [
+    {
+      "name": "Parcela",
+      "description": "Podaci o svim parcelama iz digitalnog katastarskog plana Republike Srbije."
+    },
+    {
+      "name": "Objekat",
+      "description": "Podaci o svim objektima iz digitalnog katastarskog plana Republike Srbije."
+    }
+  ],
+  "paths": {
+    "/parcela": {
+      "get": {
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "tags": [
+          "Parcela"
+        ],
+        "summary": "Vraća podatke o parcelama u zavisnosti od unetih parametara.",
+        "description": "Rezultat se filtrira na osnovu parametra koji moguj biti  naziv katastarske opštine kao i broj same parcele.",
+        "parameters": [
+          {
+            "name": "opstina",
+            "in": "query",
+            "description": "Opština u kojoj se parcele nalaze",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "kladovo"
+            }
+          },
+          {
+            "name": "kat_opstina",
+            "in": "query",
+            "description": "Katastarska opština u kojoj se parcele nalaze",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "kladovo"
+            }
+          },
+          {
+            "name": "parcela",
+            "in": "query",
+            "description": "Broj katastarske parcele",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": ""
+            }
+          },
+
+          {
+            "name": "geom",
+            "in": "query",
+            "description": "Opcija za prikaz dodatnog polja geometrije u GeoJSON formatu. Za dodavanje željenog polja potrebno je uneti - true.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "polja",
+            "in": "query",
+            "description": "Parametar za definisanje željenih polja (atributa). U slučaju da želite sva polja potrebno je uneti  -  '*'. Za manuelno definisanje atributa, unose se redom nazivi atributa odvojeni zarezom. ",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "*"
+            }
+          },
+          {
+            "name": "cir",
+            "in": "query",
+            "description": "Ukoliko Želite da se pretraga izvršava u ćirilici neophodno je da kod ovog parametra unesete - true.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+		  {
+            "name": "page",
+            "in": "query",
+            "description": "Broj strane. Za prvi set podataka uneti vrednost 0, za drugi vrednost 1, za treći vrednost 2...",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspešno izvršena operacija",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/parcela"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Parcela nije pronađena"
+          }
+        }
+      }
+    },
+    "/parcela/{brojParceleId}": {
+      "get": {
+        "tags": [
+          "Parcela"
+        ],
+        "summary": "Pronalazi parcelu na osnovu njenog jedinstvenog identifikatora.",
+        "description": "Rezultat predstavlja jednu parcelu sa svim svojim atributima.",
+        "operationId": "getparcelabr",
+        "parameters": [
+          {
+            "name": "brojParceleId",
+            "in": "path",
+            "description": "Jedinstveni identifikator parcele ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+		  {
+            "name": "geom",
+            "in": "query",
+            "description": "Opcija za prikaz dodatnog polja geometrije u GeoJSON formatu. Za dodavanje željenog polja potrebno je uneti - true.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspešno izvršena operacija",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/parcela"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Parcela/e nije pronadjena"
+          }
+        }
+      }
+    },
+    "/objekat": {
+      "get": {
+        "tags": [
+          "Objekat"
+        ],
+        "summary": "Vraća podatke o objektima u zavisnosti od unetih parametara.",
+        "description": "Rezultat se filtrira na osnovu parametra koji mogu biti naziv katastarske opštine, broj parcele kao i broj dela parcele",
+        "parameters": [
+          {
+            "name": "opstina",
+            "in": "query",
+            "description": "Opština u kojoj se parcele nalaze",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "kladovo"
+            }
+          },
+          {
+            "name": "kat_opstina",
+            "in": "query",
+            "description": "Naziv katastarske opštine u kojoj se objekti nalaze",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "br_parcele",
+            "in": "query",
+            "description": "Broj katastarske parcele na kojoj se objekti nalaze",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "brdela_parcele",
+            "in": "query",
+            "description": "Broj dela katastarske parcele na kojoj se objekat nalazi",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "geom",
+            "in": "query",
+            "description": "Opcija za prikaz dodatnog polja geometrije u GeoJSON formatu. Za dodavanje željenog polja potrebno je uneti - true.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "polja",
+            "in": "query",
+            "description": "Parametar za definisanje željenih polja (atributa). U slučaju da želite sva polja potrebno je uneti  -  '*'. Za manuelno definisanje atributa, unose se redom nazivi atributa odvojeni zarezom. ",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cir",
+            "in": "query",
+            "description": "Ukoliko Želite da se pretraga izvršava u ćirilici neophodno je da kod ovog parametra unesete - true.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+		  {
+            "name": "page",
+            "in": "query",
+            "description": "Broj strane. Za prvi set podataka uneti vrednost 0, za drugi vrednost 1, za treći vrednost 2...",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspešno izvršena operacija",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/objekat"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objekti nisu pronađeni"
+          }
+        }
+      }
+    },
+    "/objekat/{deoParceleId}": {
+      "get": {
+        "tags": [
+          "Objekat"
+        ],
+        "summary": "Pronalazi objekat filtriranjem istih ID-a dela parcele.",
+        "description": "Rezultat predstavlja objekat sa svim svojim atributima.",
+        "operationId": "getsingleobjekat",
+        "parameters": [
+          {
+            "name": "deoParceleId",
+            "in": "path",
+            "description": "Jedinstveni identifikator objekta",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+		  {
+            "name": "geom",
+            "in": "query",
+            "description": "Opcija za prikaz dodatnog polja geometrije u GeoJSON formatu. Za dodavanje željenog polja potrebno je uneti - true.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Uspešno izvršena operacija",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/objekat"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Objekti nisu pronadjeni"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "parcela": {
+        "type": "object",
+        "properties": {
+          "brparcele": {
+            "type": "string"
+          },
+          "povrsina": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "status_parcele_opis": {
+            "type": "string"
+          },
+          "maticnibrojko": {
+            "type": "integer"
+          },
+          "kat_opstina_ime": {
+            "type": "string"
+          },
+          "kat_opstina_imel": {
+            "type": "string"
+          },
+          "opstina_maticni_broj": {
+            "type": "integer"
+          },
+          "opstina_ime": {
+            "type": "string"
+          },
+          "opstina_imel": {
+            "type": "string"
+          },
+          "status_dkp": {
+            "type": "integer"
+          },
+          "dkp_status_opis": {
+            "type": "string",
+            "format": "date"
+          },
+          "in_date": {
+            "type": "string"
+          },
+          "parcela_id": {
+            "type": "string"
+          },
+		  "napomene": {
+            "type": "string"
+          },
+          "geometrija": {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "objekat": {
+        "type": "object",
+        "properties": {
+          "brparcele": {
+            "type": "string"
+          },
+          "brdelaparc": {
+            "type": "string"
+          },
+          "nacinkoriscenja": {
+            "type": "integer"
+          },
+          "nacin_koriscenja_opis": {
+            "type": "string"
+          },
+          "povrsina": {
+            "type": "integer"
+          },
+          "opisobjekta": {
+            "type": "string"
+          },
+          "maticnibrojko": {
+            "type": "integer"
+          },
+          "kat_opstina_ime": {
+            "type": "string"
+          },
+          "kat_opstina_imel": {
+            "type": "string"
+          },
+          "opstina_maticni_broj": {
+            "type": "integer"
+          },
+          "opstina_ime": {
+            "type": "string"
+          },
+          "opstina_imel": {
+            "type": "string"
+          },
+          "status_dkp": {
+            "type": "integer"
+          },
+          "dkp_status_opis": {
+            "type": "string"
+          },
+          "in_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "deoparcele_id": {
+            "type": "string"
+          },
+          "geometrija": {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "parcela": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/parcela"
+            }
+          }
+        },
+        "description": "parcela",
+        "required": true
+      },
+      "objekat": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/objekat"
+            }
+          }
+        },
+        "description": "objekat",
+        "required": true
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-access-token"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

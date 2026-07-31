@@ -1,0 +1,8 @@
+# Licni podaci -- spisak potpisnika i suvlasnistva.
+spisak.py
+
+# Interna verzija stranice, sa imenima i tabelom.
+_izlaz/
+
+# Sazetak koji sadrzi imena.
+report.json

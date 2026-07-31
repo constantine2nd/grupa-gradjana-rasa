@@ -1,0 +1,343 @@
+<title>Провера спискa парцела — Раша, Сремски Карловци</title>
+
+<style>
+:root{
+  --paper:#e9ebe4; --card:#f6f7f2; --ink:#161b17; --muted:#656b63;
+  --rule:#ccd1c7; --rule-soft:#dde1d7;
+  --onroad:#2f6a52; --behind:#35618d; --off:#a8451f;
+  --road:#3a3f38; --alert:#b23a1e; --ok:#2f6a52;
+  --ctx:#b9bfb3;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular","SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#121511; --card:#1a1e19; --ink:#e3e8df; --muted:#8f968b;
+    --rule:#2e352c; --rule-soft:#242a22;
+    --onroad:#5faa87; --behind:#78a6d6; --off:#e08a63;
+    --road:#c2cbbd; --alert:#e2795a; --ok:#5faa87; --ctx:#3a4237;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121511; --card:#1a1e19; --ink:#e3e8df; --muted:#8f968b;
+  --rule:#2e352c; --rule-soft:#242a22;
+  --onroad:#5faa87; --behind:#78a6d6; --off:#e08a63;
+  --road:#c2cbbd; --alert:#e2795a; --ok:#5faa87; --ctx:#3a4237;
+}
+:root[data-theme="light"]{
+  --paper:#e9ebe4; --card:#f6f7f2; --ink:#161b17; --muted:#656b63;
+  --rule:#ccd1c7; --rule-soft:#dde1d7;
+  --onroad:#2f6a52; --behind:#35618d; --off:#a8451f;
+  --road:#3a3f38; --alert:#b23a1e; --ok:#2f6a52; --ctx:#b9bfb3;
+}
+
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+  line-height:1.55;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1060px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(18px,4vw,32px) 96px;
+  display:flex;flex-direction:column;gap:clamp(34px,5vw,56px);}
+
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);}
+h1{font-size:clamp(29px,5.2vw,46px);line-height:1.08;letter-spacing:-.021em;
+  font-weight:700;text-wrap:balance;margin:0;}
+h2{font-size:clamp(19px,2.6vw,24px);line-height:1.2;letter-spacing:-.012em;
+  font-weight:700;margin:0;text-wrap:balance;}
+p{margin:0;max-width:64ch;}
+.lede{font-size:clamp(15.5px,1.9vw,17.5px);color:var(--muted);}
+
+header{display:flex;flex-direction:column;gap:14px;}
+header .rule{height:2px;background:var(--ink);width:52px;}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 20px;padding-top:4px;}
+
+section{display:flex;flex-direction:column;gap:18px;}
+.sechead{display:flex;flex-direction:column;gap:6px;
+  border-top:1px solid var(--rule);padding-top:14px;}
+
+/* stats */
+.stats{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+.stat{background:var(--card);padding:16px 18px 18px;display:flex;flex-direction:column;gap:3px;}
+.stat b{font-family:var(--mono);font-size:clamp(24px,3.4vw,32px);font-weight:600;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.05;}
+.stat span{font-size:12.5px;color:var(--muted);}
+.stat.flag b{color:var(--alert);}
+
+/* findings */
+.finds{display:flex;flex-direction:column;gap:12px;}
+.find{background:var(--card);border:1px solid var(--rule);
+  border-left:4px solid var(--sev);padding:15px 18px;
+  display:flex;flex-direction:column;gap:7px;}
+.find.high{--sev:var(--alert);} .find.mid{--sev:var(--south);}
+.find.low{--sev:var(--muted);} .find.good{--sev:var(--ok);}
+.find h3{margin:0;font-size:15.5px;font-weight:700;letter-spacing:-.005em;
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;}
+.find h3 code{font-family:var(--mono);font-size:13px;color:var(--sev);font-weight:600;}
+.find p{font-size:14.5px;color:var(--muted);}
+.find .ask{font-size:14.5px;color:var(--ink);}
+.find .ask strong{font-weight:600;}
+
+/* map */
+.mapbox{border:1px solid var(--rule);background:var(--card);
+  display:flex;flex-direction:column;}
+.maptools{display:flex;flex-wrap:wrap;gap:8px;padding:11px 13px;
+  border-bottom:1px solid var(--rule-soft);align-items:center;}
+button{font:inherit;font-size:12.5px;font-family:var(--mono);letter-spacing:.03em;
+  background:transparent;color:var(--muted);border:1px solid var(--rule);
+  padding:5px 11px;cursor:pointer;border-radius:2px;}
+button:hover{color:var(--ink);border-color:var(--ink);}
+button:focus-visible{outline:2px solid var(--onroad);outline-offset:2px;}
+button.on{color:var(--paper);background:var(--ink);border-color:var(--ink);}
+.hint{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto;}
+.plan{display:block;width:100%;height:min(76vh,720px);touch-action:none;cursor:grab;
+  background:var(--card);}
+.plan.drag{cursor:grabbing;}
+.plan .ctx path{fill:none;stroke:var(--ctx);stroke-width:.9;vector-effect:non-scaling-stroke;}
+.plan .s{stroke:var(--paper);stroke-width:1;vector-effect:non-scaling-stroke;fill-opacity:.82;}
+.plan .s.onroad{fill:var(--onroad);} .plan .s.behind{fill:var(--behind);}
+.plan .s.off{fill:var(--off);}
+.plan .road path{fill:var(--road);fill-opacity:.9;stroke:var(--road);
+  stroke-width:1.4;vector-effect:non-scaling-stroke;}
+.plan .lbl text{font-family:var(--mono);font-size:9px;fill:var(--ink);
+  text-anchor:middle;dominant-baseline:middle;paint-order:stroke;
+  stroke:var(--card);stroke-width:2.6px;stroke-linejoin:round;}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 14px;
+  border-top:1px solid var(--rule-soft);font-size:12.5px;color:var(--muted);}
+.legend i{display:inline-block;width:11px;height:11px;margin-right:7px;
+  vertical-align:-1px;border-radius:1px;}
+.legend span{white-space:nowrap;}
+
+/* table */
+.tablebox{border:1px solid var(--rule);background:var(--card);overflow-x:auto;}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px;}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;
+  padding:11px 14px;border-bottom:1px solid var(--rule);white-space:nowrap;
+  position:sticky;top:0;background:var(--card);}
+td{padding:8px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:baseline;}
+tr:last-child td{border-bottom:none;}
+td.own{font-weight:600;white-space:nowrap;}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;}
+td.r{text-align:right;}
+tr.bad td{background:color-mix(in srgb,var(--alert) 10%,transparent);}
+tr.warn td{background:color-mix(in srgb,var(--off) 12%,transparent);}
+tr.shared td{background:color-mix(in srgb,var(--behind) 9%,transparent);}
+.chip{display:inline-block;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.05em;padding:2px 7px;border-radius:2px;white-space:nowrap;
+  border:1px solid currentColor;}
+.chip.ok{color:var(--ok);} .chip.no{color:var(--alert);}
+.chip.onroad{color:var(--onroad);} .chip.behind{color:var(--behind);}
+.chip.off{color:var(--off);}
+td .sub{color:var(--muted);font-size:11.5px;}
+
+.note{border-top:1px solid var(--rule);padding-top:16px;
+  display:flex;flex-direction:column;gap:10px;}
+.note p{font-size:13.5px;color:var(--muted);max-width:72ch;}
+.note code{font-family:var(--mono);font-size:12.5px;}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="rule"></div>
+  <div class="eyebrow">КО Сремски Карловци · матични број 805408</div>
+  <h1>Провера списка парцела</h1>
+  <p class="lede">Иницијатива за асфалтирање пута и увођење интернета у Раши. Сваки
+     број парцеле са потписног списка упоређен је са дигиталним катастарским планом
+     Републичког геодетског завода.</p>
+  <div class="meta">
+    <span>Провера: 31.07.2026.</span>
+    <span>Извор: ДКП / geosrbija.rs</span>
+    <span>Провере: постојање, површина, статус, положај</span>
+  </div>
+</header>
+
+<section>
+  <div class="stats">
+%%TILES%%
+  </div>
+</section>
+
+<section>
+  <div class="sechead">
+    <div class="eyebrow">Шта тражи разјашњење</div>
+    <h2>Шта је чисто, а шта тражи разјашњење</h2>
+  </div>
+  <div class="finds">
+
+    <div class="find high">
+      <h3>Два уписана сувласника нису на списку <code>%%NNEPOTPISALI%%</code></h3>
+      <p>Б лист за парцелу 2931/1 показује шест сувласника, свако са уделом 1/6.
+         Четворо их је на потписном списку. <b>%%NEPOTPISALI%%</b> нису.</p>
+      <p class="ask"><strong>Позвати их да потпишу.</strong> Сувласник са 1/6 има
+         исто право гласа о судбини парцеле као и остали; ако иницијатива иде без
+         њих, општина може да тражи њихову сагласност накнадно.</p>
+    </div>
+
+    <div class="find good">
+      <h3>Двоструке пријаве нису биле сукоб <code>2930 и 2931/1</code></h3>
+      <p>Обе парцеле имају <b>исту шесторку сувласника, свако са 1/6</b>. Ђорђевић
+         Јован је пријавио „2931", парцеле која не постоји — реч је о 2931/1, где
+         је сувласник; исправљено у списку. Дорословачки и Тошић нису у сукобу
+         око 2930, обоје су уписани сувласници.</p>
+      <p>Заједно то је 4.431 m² у сувласништву, обе парцеле уз сам пут.</p>
+    </div>
+
+    <div class="find good">
+      <h3>Северне парцеле нису одвојен крак <code>0 m од пута</code></h3>
+      <p>Парцеле 2315/1, 2322 и 2736/1, 2736/2, 2736/3 излазе директно на пут
+         7810/2, исто као и парцеле у средишту. Пут је дугачак преко 2 km и оне
+         су на његовом северном делу — није реч о засебној деоници него о истој
+         траси, само даље.</p>
+    </div>
+
+    <div class="find high">
+      <h3>Седам парцела уопште не излази на овај пут <code>%%MINOFF%%–%%MAXOFF%% m</code></h3>
+      <p>%%OFFLIST%% — све су у КО Сремски Карловци, али
+         најближа је %%MINOFF%% m од трасе пута 7810/2. Њима се не долази овим
+         путем.</p>
+      <p class="ask"><strong>Ово треба решити пре предаје.</strong> Општина ће
+         тражити да сваки потписник има интерес на деоници која се асфалтира. За
+         те парцеле треба или наћи којим путем се до њих долази и то водити као
+         засебну иницијативу, или их скинути са овог списка.</p>
+    </div>
+
+    <div class="find low">
+      <h3>Парцела 2937/4 је цела под објектом <code>33 m² / 33 m²</code></h3>
+      <p>Раније је деловала као грешка у препису, јер је премала за парцелу. Провера
+         слоја објеката показује да на њој стоји објекат од тачно 33 m² — дакле није
+         пролаз ни приступна трака, него парцела на којој је само зграда.</p>
+    </div>
+
+    <div class="find good">
+      <h3>Све остало је чисто <code>%%NOK%% / %%NTOTAL%%</code></h3>
+      <p>Свих %%NOK%% нађених парцела су у КО Сремски Карловци и све имају статус
+         <b>УПИСАНА У ОПЕРАТ</b> — нема ниједне у поступку, у комасацији или са
+         неусаглашеним ДКП-ом. Бројеви су тачно преписани.</p>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="sechead">
+    <div class="eyebrow">Катастарски план</div>
+    <h2>Где парцеле стварно леже</h2>
+  </div>
+  <p class="lede">Тамна трака кроз план је пут <b>7810/2</b> — %%ROADM2%% m², преко
+     2 km дужине. Обојене су парцеле са списка, према томе излазе ли на њега.
+     Сиве су суседне парцеле из катастра (%%NCTX%% комада). Точкић зумира,
+     превлачење помера.</p>
+  <div class="mapbox">
+    <div class="maptools">
+      <button type="button" data-v="all" class="on">Све</button>
+      <button type="button" data-v="onroad">Уз пут</button>
+      <button type="button" data-v="off">Ван трасе</button>
+      <span class="hint">точкић = зум · превуци = помери</span>
+    </div>
+    <svg class="plan" id="plan" viewBox="0 0 %%W%% %%H%%" preserveAspectRatio="xMidYMid meet"
+         role="img" aria-label="Катастарски план парцела са потписног списка">
+      <g class="ctx">%%CTX%%</g>
+      <g class="road">%%ROAD%%</g>
+      <g class="sig">%%SIG%%</g>
+      <g class="lbl">%%LBL%%</g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:var(--road)"></i>Пут 7810/2</span>
+      <span><i style="background:var(--onroad)"></i>Излази на пут — %%NONROAD%%</span>
+      <span><i style="background:var(--behind)"></i>Залеђе, до %%MAXBEHIND%% m — %%NBEHIND%%</span>
+      <span><i style="background:var(--off)"></i>Ван трасе — %%NOFF%%</span>
+      <span><i style="background:var(--ctx)"></i>Суседне парцеле</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sechead">
+    <div class="eyebrow">Потписни списак</div>
+    <h2>Свих %%NOWNERS%% пријава, парцелу по парцелу</h2>
+  </div>
+  <p class="lede">Колона <b>m до пута</b> је најмање растојање од парцеле до
+     полигона пута 7810/2; „излази" значи да се граничи са њим. Колона
+     <b>под објектом</b> је површина под зградама из катастарског слоја објеката — %%NOBJ%% од %%NOK%% парцела има бар један објекат. Знак ×2 значи да их је више.</p>
+  <div class="tablebox">
+    <table>
+      <thead><tr>
+        <th>Потписник</th><th>Парцела</th><th>Површина m²</th><th>Под објектом m²</th><th>Статус у катастру</th>
+        <th>Однос на пут</th><th>m до пута</th><th>Пријављен за</th>
+      </tr></thead>
+      <tbody>%%TBODY%%</tbody>
+    </table>
+  </div>
+</section>
+
+<section class="note">
+  <div class="eyebrow">Шта овом провером није проверено</div>
+  <p><b>Власништво.</b> Имена власника нису јавно доступна кроз сервисе Геосрбије.
+     Једини јавни извор је еКатастар, а он тражи ручно уношење за сваку парцелу.
+     Ова провера зато потврђује да парцела <em>постоји</em> и <em>где је</em> —
+     не и да је потписник њен власник. За званичну иницијативу то се решава тако што
+     уз потпис иде <b>број листа непокретности</b> (за сада га има само Урдаревић,
+     ЛН 4257).</p>
+  <p><b>Улица и кућни број.</b> „Потес / Улица: РАША" из еКатастра је податак из
+     А листа операта, не из адресног регистра — у списку од 210 улица општине
+     Сремски Карловци нема ниједне под тим именом. Слој адресног регистра са
+     кућним бројевима („Кућни број") постоји и има баш поља за спајање по броју
+     парцеле, али је затворен за читање. Зато у табели стоји површина под објектом,
+     као једини податак о изграђености који се добија аутоматски.</p>
+  <p><b>Траса пута.</b> План приказује парцеле, не пут. Празнине између парцела јесу
+     јавно земљиште, али коју тачно деоницу иницијатива тражи треба уцртати ручно —
+     најбоље на истом плану, пре предаје општини.</p>
+  <p><b>Препорука за сам документ.</b> Додати колону за потпис и датум, и раздвојити
+     „асфалт" и „интернет" у две колоне за штиклирање — Глигорић је пријављена само
+     за асфалт, а општина и провајдер траже одвојене спискове.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var svg=document.getElementById('plan');
+  var W=%%W%%, H=%%H%%;
+  var VIEWS={all:%%VALL%%, onroad:%%VONROAD%%, off:%%VOFF%%};
+  var vb=VIEWS.all.slice();
+  function apply(){svg.setAttribute('viewBox',vb.map(function(n){return n.toFixed(1);}).join(' '));}
+  document.querySelectorAll('.maptools button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.maptools button').forEach(function(o){o.classList.remove('on');});
+      b.classList.add('on');
+      vb=VIEWS[b.dataset.v].slice(); apply();
+    });
+  });
+  svg.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var r=svg.getBoundingClientRect();
+    var sx=vb[2]/r.width, sy=vb[3]/r.height, s=Math.max(sx,sy);
+    var mx=vb[0]+vb[2]/2+(e.clientX-r.left-r.width/2)*s;
+    var my=vb[1]+vb[3]/2+(e.clientY-r.top-r.height/2)*s;
+    var k=e.deltaY>0?1.14:1/1.14;
+    var nw=Math.min(W*1.6,Math.max(W/60,vb[2]*k));
+    var nh=nw*(vb[3]/vb[2]);
+    vb[0]=mx-(mx-vb[0])*(nw/vb[2]);
+    vb[1]=my-(my-vb[1])*(nh/vb[3]);
+    vb[2]=nw; vb[3]=nh; apply();
+  },{passive:false});
+  var dragging=false,lx=0,ly=0;
+  svg.addEventListener('pointerdown',function(e){
+    dragging=true;lx=e.clientX;ly=e.clientY;svg.classList.add('drag');
+    svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener('pointermove',function(e){
+    if(!dragging)return;
+    var r=svg.getBoundingClientRect();
+    var s=Math.max(vb[2]/r.width,vb[3]/r.height);
+    vb[0]-=(e.clientX-lx)*s; vb[1]-=(e.clientY-ly)*s;
+    lx=e.clientX;ly=e.clientY;apply();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+    svg.addEventListener(ev,function(){dragging=false;svg.classList.remove('drag');});
+  });
+  apply();
+})();
+</script>
