@@ -11,6 +11,11 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Inicijativa za asfaltiranje puta i optički internet — Raša">
 <meta property="og:description" content="Katastarski plan parcela i puta 7810/2 u Raši, KO Sremski Karlovci. Podaci iz digitalnog katastarskog plana Republičkog geodetskog zavoda.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Raša">
 <style>*,*::before,*::after{box-sizing:border-box}body{margin:0}</style>
 </head>
 <body>
@@ -276,6 +281,14 @@ button.on{color:var(--paper);background:var(--ink);border-color:var(--ink);}
 
   apply();
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js', { scope: './' })
+      .catch(function (e) { console.warn('Service worker nije registrovan:', e); });
+  });
+}
 </script>
 </body>
 </html>

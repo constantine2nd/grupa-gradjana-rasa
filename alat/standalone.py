@@ -22,6 +22,33 @@ NASLOV = sys.argv[3] if len(sys.argv) > 3 else None
 OPIS = ('Katastarski plan parcela i puta 7810/2 u Raši, KO Sremski Karlovci. '
         'Podaci iz digitalnog katastarskog plana Republičkog geodetskog zavoda.')
 
+# Stranica se ne provlaci kroz Jekyll (nema front matter), pa `relative_url`
+# ovde ne postoji i baseurl se ne sme upisati rukom. Sve putanje su RELATIVNE:
+# stranica stoji u korenu sajta, pored manifest.webmanifest, sw.js i assets/,
+# pa isto vaze i kad se sajt servira i kad se fajl otvori sa diska.
+#
+# Bez ovoga plan je bio jedina stranica koja ne registruje service worker --
+# ko dobije link bas na njega i otvori ga prvi put, ne dobije nista kesirano.
+# A plan je jedina stranica koju neko stvarno otvara u ataru, bez signala.
+#
+# Trake "nova verzija" ovde nema namerno: nosila bi svoj markup i svoj CSS u
+# stranicu koja je inace samostalna. Sadrzaj je i tako mreza-pa-kes, pa je uvek
+# svez dok ima signala; nova verzija preuzme kad se zatvore sve kartice.
+PWA = '''<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Raša">'''
+
+REGISTRACIJA = '''<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js', { scope: './' })
+      .catch(function (e) { console.warn('Service worker nije registrovan:', e); });
+  });
+}
+</script>'''
+
 frag = open(SRC, encoding='utf-8').read()
 
 m = re.search(r'<title>(.*?)</title>\s*', frag, re.S)
@@ -42,10 +69,12 @@ html = f'''<!doctype html>
 <meta property="og:type" content="website">
 <meta property="og:title" content="{naslov}">
 <meta property="og:description" content="{OPIS}">
+{PWA}
 <style>*,*::before,*::after{{box-sizing:border-box}}body{{margin:0}}</style>
 </head>
 <body>
 {frag.strip()}
+{REGISTRACIJA}
 </body>
 </html>
 '''

@@ -20,6 +20,16 @@ To je sve. Skripta redom pokrene `gen.py` (crta plan i obe verzije stranice),
 `translit.py` (ćirilica u latinicu) i `standalone.py` (uvija javnu verziju u pun
 HTML dokument i smešta je u koren sajta). Posle toga samo `git add` i `push`.
 
+`standalone.py` u zaglavlje upisuje i `manifest.webmanifest`, ikone i registraciju
+service workera — **relativnim putanjama**, jer ova stranica ne prolazi kroz Jekyll
+pa `relative_url` ne postoji, a `baseurl` se ne sme ukucati rukom. Pošto stranica
+stoji u korenu sajta, pored `manifest.webmanifest` i `sw.js`, iste putanje rade i
+kad se sajt servira i kad se fajl otvori sa diska.
+
+Bez toga plan je bio jedina stranica koja ne registruje service worker: ko dobije
+link baš na njega i otvori ga prvi put, ne dobije ništa keširano — a to je jedina
+stranica koju neko stvarno otvara u ataru, gde signala nema.
+
 ## Lični podaci
 
 **Spisak potpisnika stoji u `alat/spisak.py`, koji se ne komituje.** Naveden je u
@@ -140,7 +150,7 @@ zatreba i nov pojas susednih parcela. Za obično dodavanje potpisnika ne treba.
 | `fetchobjekti.py` | Površina pod zgradama, po parceli |
 | `build.py` | Spaja spisak sa geometrijama |
 | `gen.py` | Razvrstavanje, rastojanja, SVG plan, tabela, obe stranice |
-| `standalone.py` | Uvija fragment u pun HTML dokument |
+| `standalone.py` | Uvija fragment u pun HTML dokument, dodaje manifest i service worker |
 | `translit.py` | Srpska ćirilica → latinica, samo nad ćiriličnim znakovima |
 | `page.tmpl.html` | Predložak interne stranice; `%%TOKEN%%` popunjava `gen.py` |
 | `page-javno.tmpl.html` | Predložak javne stranice — bez imena i bez tabele |
