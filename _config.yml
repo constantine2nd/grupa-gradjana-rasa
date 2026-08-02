@@ -19,6 +19,11 @@ google_analytics:   G-G6HREV15KE # out your google-analytics code
 
 # Build settings
 markdown:           kramdown
+
+# Sazeti CSS. Service worker ga precache-uje, pa 18% manje nije samo prenos
+# nego i mesto na uredjaju.
+sass:
+  style:            compressed
 paginate:           5
 paginate_path:      "/posts/page:num/"
 plugins:
