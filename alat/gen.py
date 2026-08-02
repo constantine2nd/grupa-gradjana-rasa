@@ -12,6 +12,8 @@ svake izmene spiska.
 """
 import json, math, html, os, sys
 
+from koordinate import u_wgs84
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 os.chdir(HERE)
 # Interna verzija ide u _izlaz/, koji se ne komituje -- sadrzi imena.
@@ -102,7 +104,15 @@ def view(ps, pad=90):
 ctx = ''.join(f'<path d="{path(G[k]["rings"])}"/>' for k in context)
 rd = ''.join(f'<path d="{path(v["rings"])}"><title>Пут {k} · {v["povrsina"]} m²</title></path>'
              for k, v in sorted(ROAD.items()))
-sg = ''.join(f'<path class="s {GRP[p]}" d="{path(G[p]["rings"])}">'
+# Centroid u stepenima, za "otvori u mapama". Sest decimala je oko 0,1 m --
+# sitnije od toga nema smisla, jer je i sam katastarski plan grublji.
+LATLON = {p: u_wgs84(*G[p]['c']) for p in sig}
+
+sg = ''.join(f'<path class="s {GRP[p]}" d="{path(G[p]["rings"])}"'
+             f' data-p="{p}" data-m2="{G[p]["povrsina"]}" data-d="{DIST[p]}"'
+             f' data-lat="{LATLON[p][0]:.6f}" data-lon="{LATLON[p][1]:.6f}"'
+             f' tabindex="0" role="button"'
+             f' aria-label="Парцела {p}, {G[p]["povrsina"]} квадратних метара">'
              f'<title>Парцела {p} · {G[p]["povrsina"]} m² · {DIST[p]} m до пута</title></path>'
              for p in sig)
 lb = ''.join(f'<text x="{G[p]["c"][0]-x0:.0f}" y="{y1-G[p]["c"][1]:.0f}">{p}</text>'

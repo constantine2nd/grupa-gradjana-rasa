@@ -100,9 +100,28 @@ button.on{color:var(--paper);background:var(--ink);border-color:var(--ink);}
 .plan .s.off{fill:var(--off);}
 .plan .road path{fill:var(--road);fill-opacity:.9;stroke:var(--road);
   stroke-width:1.4;vector-effect:non-scaling-stroke;}
-.plan .lbl text{font-family:var(--mono);font-size:9px;fill:var(--ink);
+.plan .lbl text{pointer-events:none;font-family:var(--mono);font-size:9px;fill:var(--ink);
   text-anchor:middle;dominant-baseline:middle;paint-order:stroke;
   stroke:var(--card);stroke-width:2.6px;stroke-linejoin:round;}
+.plan .s{cursor:pointer;}
+.plan .s:focus-visible{stroke:var(--ink);stroke-width:3;outline:none;}
+.plan .s.izabrana{stroke:var(--ink);stroke-width:3;fill-opacity:1;}
+.izbor{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;
+  padding:11px 14px;border-top:1px solid var(--rule-soft);
+  font-family:var(--mono);font-size:12.5px;color:var(--ink);}
+.izbor[hidden]{display:none;}
+.izbor .broj{font-size:14px;font-weight:600;letter-spacing:.02em;}
+.izbor .meta{color:var(--muted);}
+.izbor code{font-family:var(--mono);font-size:12.5px;background:var(--paper);
+  border:1px solid var(--rule);padding:3px 8px;border-radius:2px;
+  user-select:all;-webkit-user-select:all;}
+.izbor a,.izbor .dug{font:inherit;font-family:var(--mono);font-size:12px;
+  padding:5px 11px;border:1px solid var(--rule);border-radius:2px;
+  background:transparent;color:var(--muted);cursor:pointer;text-decoration:none;}
+.izbor a:hover,.izbor .dug:hover{color:var(--ink);border-color:var(--ink);}
+.izbor .zatvori{margin-left:auto;border:none;background:transparent;
+  color:var(--muted);font-size:17px;line-height:1;padding:2px 6px;cursor:pointer;}
+.izbor .zatvori:hover{color:var(--ink);}
 .legend{display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 14px;
   border-top:1px solid var(--rule-soft);font-size:12.5px;color:var(--muted);}
 .legend i{display:inline-block;width:11px;height:11px;margin-right:7px;
@@ -249,6 +268,14 @@ td .sub{color:var(--muted);font-size:11.5px;}
       <g class="sig">%%SIG%%</g>
       <g class="lbl">%%LBL%%</g>
     </svg>
+    <div class="izbor" id="izbor" hidden>
+      <span class="broj" id="izbor-broj"></span>
+      <span class="meta" id="izbor-meta"></span>
+      <code id="izbor-koord"></code>
+      <a id="izbor-mapa" href="#" target="_blank" rel="noopener noreferrer">Отвори у мапама</a>
+      <button type="button" class="dug" id="izbor-kopiraj">Копирај</button>
+      <button type="button" class="zatvori" id="izbor-zatvori" aria-label="Затвори избор">&times;</button>
+    </div>
     <div class="legend">
       <span><i style="background:var(--road)"></i>Пут 7810/2</span>
       <span><i style="background:var(--onroad)"></i>Излази на пут — %%NONROAD%%</span>
@@ -363,15 +390,16 @@ td .sub{color:var(--muted);font-size:11.5px;}
 
   // Jedan prst pomera, dva zumiraju. Pinch moramo sami: touch-action:none
   // iskljucuje pregledacev, pa bez ovoga na telefonu nema nikakvog zuma.
-  var pts={}, n=0, lx=0, ly=0, pd=0;
+  var pts={}, n=0, lx=0, ly=0, pd=0, pomereno=0, pocetniCilj=null;
   function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
   function pair(){var k=Object.keys(pts);return [pts[k[0]],pts[k[1]]];}
 
   svg.addEventListener('pointerdown',function(e){
     if(pts[e.pointerId])return;
     pts[e.pointerId]={x:e.clientX,y:e.clientY}; n++;
+    if(n===1)pocetniCilj=e.target;
     try{svg.setPointerCapture(e.pointerId);}catch(err){}
-    if(n===1){lx=e.clientX; ly=e.clientY; svg.classList.add('drag');}
+    if(n===1){lx=e.clientX; ly=e.clientY; pomereno=0; svg.classList.add('drag');}
     else if(n===2){pd=dist(pair()[0],pair()[1]); svg.classList.remove('drag');}
   });
   svg.addEventListener('pointermove',function(e){
@@ -380,6 +408,7 @@ td .sub{color:var(--muted);font-size:11.5px;}
     if(n===1){
       var r=svg.getBoundingClientRect();
       var s=Math.max(vb[2]/r.width,vb[3]/r.height);
+      pomereno+=Math.abs(e.clientX-lx)+Math.abs(e.clientY-ly);
       vb[0]-=(e.clientX-lx)*s; vb[1]-=(e.clientY-ly)*s;
       lx=e.clientX; ly=e.clientY; apply();
     }else if(n===2){
@@ -410,6 +439,75 @@ td .sub{color:var(--muted);font-size:11.5px;}
     else return;
     e.preventDefault();
   });
+
+  // ---------- izbor parcele ----------
+  // Klik (ili Enter na tastaturi) na parcelu pokazuje traku sa brojem,
+  // povrsinom i koordinatama centroida, plus precicu ka mapama.
+  //
+  // Koordinate racuna gen.py iz iste geometrije kojom crta plan, pa ne mogu da
+  // se raziđu sa spiskom. Sest decimala je oko 0,1 m -- sitnije nema smisla.
+  var izbor=document.getElementById('izbor');
+  var izbroj=document.getElementById('izbor-broj');
+  var izmeta=document.getElementById('izbor-meta');
+  var izkoord=document.getElementById('izbor-koord');
+  var izmapa=document.getElementById('izbor-mapa');
+  var izkopiraj=document.getElementById('izbor-kopiraj');
+  var izabrana=null;
+
+  function tacka(el){
+    var lat=el.getAttribute('data-lat'), lon=el.getAttribute('data-lon');
+    return lat&&lon?lat+', '+lon:null;
+  }
+  function pokaziIzbor(el){
+    if(!izbor||!el)return;
+    var k=tacka(el); if(!k)return;
+    if(izabrana)izabrana.classList.remove('izabrana');
+    izabrana=el; el.classList.add('izabrana');
+    var m2=el.getAttribute('data-m2'), d=el.getAttribute('data-d');
+    izbroj.textContent='Парцела '+el.getAttribute('data-p');
+    izmeta.textContent=m2.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' m² · '+
+      (Number(d)>5?d+' m до пута':'излази на пут');
+    izkoord.textContent=k;
+    // Adresa se sklapa ovde, a ne u HTML-u, da stranica u izvoru i dalje nema
+    // nijednu spoljnu adresu koja bi se ucitala.
+    izmapa.href='https://www.google.com/maps/search/?api=1&query='+
+      encodeURIComponent(el.getAttribute('data-lat')+','+el.getAttribute('data-lon'));
+    izkopiraj.textContent='Копирај';
+    izbor.hidden=false;
+  }
+  function sakrijIzbor(){
+    if(izabrana)izabrana.classList.remove('izabrana');
+    izabrana=null; if(izbor)izbor.hidden=true;
+  }
+  if(izbor){
+    // Prevlacenje ne sme da se zavrsi kao izbor parcele.
+    svg.addEventListener('click',function(e){
+      if(pomereno>6)return;
+      // NE e.target: svg je uhvatio pokazivac na pointerdown, pa click stize
+      // njemu a ne parceli. Gleda se sta je bilo ispod prsta na pocetku.
+      var izvor=pocetniCilj||e.target;
+      var t=izvor&&izvor.closest?izvor.closest('path[data-p]'):null;
+      if(t)pokaziIzbor(t); else sakrijIzbor();
+    });
+    svg.addEventListener('keydown',function(e){
+      if(e.key!=='Enter'&&e.key!==' ')return;
+      var t=e.target.closest?e.target.closest('path[data-p]'):null;
+      if(!t)return;
+      e.preventDefault(); e.stopPropagation(); pokaziIzbor(t);
+    });
+    document.getElementById('izbor-zatvori').addEventListener('click',sakrijIzbor);
+    izkopiraj.addEventListener('click',function(){
+      var t=izkoord.textContent;
+      var uspeh=function(){izkopiraj.textContent='Копирано';};
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(t).then(uspeh,function(){});
+      }else{
+        // Stariji pregledaci: obelezi tekst pa neka covek kopira sam.
+        var r=document.createRange(); r.selectNodeContents(izkoord);
+        var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      }
+    });
+  }
 
   apply();
 })();

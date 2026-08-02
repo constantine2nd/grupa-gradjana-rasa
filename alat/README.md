@@ -69,6 +69,27 @@ jer tvrdnje u njemu ne prate spisak automatski.
 
 ---
 
+## Klik na parcelu
+
+Klik (ili Enter, parcele primaju fokus) otvara traku ispod plana sa brojem,
+površinom, rastojanjem do puta i **koordinatama centroida u WGS84**, uz prečicu
+ka Google mapama i dugme za kopiranje. To je i razlog zašto je plan uopšte
+offline: da se u ataru, bez signala, može pročitati koja je parcela i gde tačno.
+
+Koordinate računa `gen.py` iz iste geometrije kojom crta plan, pa ne mogu da se
+raziđu sa spiskom — `results.json` se za ovo **ne koristi**, on je zastareo čim
+se spisak proširi.
+
+Projekciju radi `koordinate.py`, ručno, da `napravi.py` ne bi dobio zavisnost od
+pyproj-a (do sada ga je tražio samo `check.py`). Tačnost nije na veru: poređena
+je sa pyproj-om na centroidima svih 1.152 parcele iz `geoms.json` i najveća
+razlika je **0,1 mm**.
+
+Adresa Google mapa se sklapa u JavaScriptu, ne stoji u HTML-u, pa stranica i
+dalje nema nijedan spoljni resurs koji se učitava. Brojač u `standalone.py` sada
+razlikuje to dvoje: broji `src=`, `<link href=`, `url()` i `@import`, a ne i
+obične linkove.
+
 ## Odakle podaci
 
 Interni servis `a3.geosrbija.rs`. Bez ključa, bez naloga, bez captche.
@@ -151,6 +172,7 @@ zatreba i nov pojas susednih parcela. Za obično dodavanje potpisnika ne treba.
 | `build.py` | Spaja spisak sa geometrijama |
 | `gen.py` | Razvrstavanje, rastojanja, SVG plan, tabela, obe stranice |
 | `standalone.py` | Uvija fragment u pun HTML dokument, dodaje manifest i service worker |
+| `koordinate.py` | UTM 34N → WGS84, bez pyproj-a |
 | `translit.py` | Srpska ćirilica → latinica, samo nad ćiriličnim znakovima |
 | `page.tmpl.html` | Predložak interne stranice; `%%TOKEN%%` popunjava `gen.py` |
 | `page-javno.tmpl.html` | Predložak javne stranice — bez imena i bez tabele |

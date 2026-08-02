@@ -80,6 +80,19 @@ html = f'''<!doctype html>
 '''
 
 open(DST, 'w', encoding='utf-8').write(html)
+
+# Broje se samo resursi koji se STVARNO povlace pri prikazu: src=, <link href=,
+# url() u CSS-u i @import. Obicno <a href> se ne racuna -- link ka mapama nista
+# ne ucitava dok se ne klikne, a stranica bez interneta i dalje radi cela.
+# Ranije je ovde stajalo prosto brojanje "https?://", pa je adresa Gugl mapa u
+# skripti izgledala kao spoljna zavisnost, sto nije.
+resursi = (re.findall(r'\bsrc\s*=\s*["\']https?://', html)
+           + re.findall(r'<link\b[^>]*\bhref\s*=\s*["\']https?://', html)
+           + re.findall(r'url\(\s*["\']?https?://', html)
+           + re.findall(r'@import\s+["\']?https?://', html))
+odlazni = len(re.findall(r'<a\b[^>]*\bhref\s*=\s*["\']https?://', html))
+
 print(f'{os.path.abspath(DST)}  ({len(html)} B)')
 print(f'  naslov: {naslov}')
-print(f'  spoljnih zahteva: {len(re.findall(r"https?://", html))}  (0 = radi bez interneta)')
+print(f'  spoljnih zahteva pri prikazu: {len(resursi)}  (0 = radi bez interneta)')
+print(f'  odlaznih linkova: {odlazni}  (ne ucitavaju se, otvaraju se na klik)')

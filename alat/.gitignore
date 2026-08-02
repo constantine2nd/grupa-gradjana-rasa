@@ -6,3 +6,6 @@ _izlaz/
 
 # Sazetak koji sadrzi imena.
 report.json
+
+# Nastaje otkad gen.py uvozi koordinate.py.
+__pycache__/
