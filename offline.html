@@ -1,0 +1,47 @@
+---
+layout: null
+---
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nema veze sa internetom — {{ site.title }}</title>
+<meta name="theme-color" content="#0085A1">
+<link rel="icon" href="{{ '/assets/icons/favicon.svg' | relative_url }}" type="image/svg+xml">
+<!-- Stilovi su ovde unutra namerno: ova stranica se prikazuje kad mreze nema,
+     pa ne sme da zavisi ni od jednog drugog fajla. -->
+<style>
+  :root{ --teal:#0085A1; --ink:#212529; --muted:#6c757d; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; min-height:100vh; display:flex; align-items:center;
+        justify-content:center; padding:32px;
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+                    "Helvetica Neue",Arial,sans-serif;
+        color:var(--ink); background:#fff; line-height:1.6; }
+  .box{ max-width:34rem; text-align:center; }
+  svg{ width:88px; height:88px; margin-bottom:24px; }
+  h1{ font-size:clamp(24px,5vw,32px); margin:0 0 12px; font-weight:800;
+      letter-spacing:-.01em; }
+  p{ margin:0 0 14px; color:var(--muted); }
+  a.btn{ display:inline-block; margin-top:14px; padding:11px 24px;
+         background:var(--teal); color:#fff; text-decoration:none;
+         border-radius:3px; font-weight:600; }
+  a.btn:hover,a.btn:focus{ background:#006d84; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <svg viewBox="0 0 512 512" role="img" aria-label="Znak Grupe građana Raša">
+      <rect width="512" height="512" rx="72" fill="#0085A1"/>
+      <path d="M256 96 L200 200 L300 300 L210 416" fill="none" stroke="#fff"
+            stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1>Nema veze sa internetom</h1>
+    <p>Ova stranica nije sačuvana na uređaju, pa ne može da se prikaže dok si van mreže.</p>
+    <p>Katastarski plan radi i bez interneta ako si ga već otvarao — probaj njega,
+       ili pokušaj ponovo kad uhvatiš signal.</p>
+    <a class="btn" href="{{ '/' | relative_url }}">Pokušaj ponovo</a>
+  </div>
+</body>
+</html>
