@@ -273,6 +273,7 @@ td .sub{color:var(--muted);font-size:11.5px;}
       <span class="meta" id="izbor-meta"></span>
       <code id="izbor-koord"></code>
       <a id="izbor-mapa" href="#" target="_blank" rel="noopener noreferrer">Отвори у мапама</a>
+      <a id="izbor-geo" href="#" hidden>У мапи телефона</a>
       <button type="button" class="dug" id="izbor-kopiraj">Копирај</button>
       <button type="button" class="zatvori" id="izbor-zatvori" aria-label="Затвори избор">&times;</button>
     </div>
@@ -452,6 +453,8 @@ td .sub{color:var(--muted);font-size:11.5px;}
   var izkoord=document.getElementById('izbor-koord');
   var izmapa=document.getElementById('izbor-mapa');
   var izkopiraj=document.getElementById('izbor-kopiraj');
+  var izgeo=document.getElementById('izbor-geo');
+  var naTelefonu=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches;
   var izabrana=null;
 
   function tacka(el){
@@ -472,6 +475,19 @@ td .sub{color:var(--muted);font-size:11.5px;}
     // nijednu spoljnu adresu koja bi se ucitala.
     izmapa.href='https://www.google.com/maps/search/?api=1&query='+
       encodeURIComponent(el.getAttribute('data-lat')+','+el.getAttribute('data-lon'));
+    // geo: otvara podrazumevanu mapu na telefonu -- OsmAnd, Organic Maps, Google
+    // Maps, sta je vec podeseno. Samo pin, bez poligona: nijedna mapa ne prima
+    // geometriju kroz URL.
+    //
+    // Na racunaru geo: ne radi nista, pa se dugme tamo i ne prikazuje. Merilo je
+    // "grub" pokazivac -- prst, ne mis.
+    if(izgeo){
+      // Kosa crta u broju parcele ostaje kakva jeste -- neke mape %2F prikazu doslovno.
+      var ime=encodeURIComponent('Парцела '+el.getAttribute('data-p')).replace(/%2F/g,'/');
+      izgeo.href='geo:'+el.getAttribute('data-lat')+','+el.getAttribute('data-lon')+
+        '?q='+el.getAttribute('data-lat')+','+el.getAttribute('data-lon')+'('+ime+')';
+      izgeo.hidden=!naTelefonu;
+    }
     izkopiraj.textContent='Копирај';
     izbor.hidden=false;
   }

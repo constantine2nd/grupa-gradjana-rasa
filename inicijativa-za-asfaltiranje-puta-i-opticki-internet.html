@@ -170,6 +170,7 @@ button.on{color:var(--paper);background:var(--ink);border-color:var(--ink);}
       <span class="meta" id="izbor-meta"></span>
       <code id="izbor-koord"></code>
       <a id="izbor-mapa" href="#" target="_blank" rel="noopener noreferrer">Otvori u mapama</a>
+      <a id="izbor-geo" href="#" hidden>U mapi telefona</a>
       <button type="button" class="dug" id="izbor-kopiraj">Kopiraj</button>
       <button type="button" class="zatvori" id="izbor-zatvori" aria-label="Zatvori izbor">&times;</button>
     </div>
@@ -320,6 +321,8 @@ button.on{color:var(--paper);background:var(--ink);border-color:var(--ink);}
   var izkoord=document.getElementById('izbor-koord');
   var izmapa=document.getElementById('izbor-mapa');
   var izkopiraj=document.getElementById('izbor-kopiraj');
+  var izgeo=document.getElementById('izbor-geo');
+  var naTelefonu=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches;
   var izabrana=null;
 
   function tacka(el){
@@ -340,6 +343,19 @@ button.on{color:var(--paper);background:var(--ink);border-color:var(--ink);}
     // nijednu spoljnu adresu koja bi se ucitala.
     izmapa.href='https://www.google.com/maps/search/?api=1&query='+
       encodeURIComponent(el.getAttribute('data-lat')+','+el.getAttribute('data-lon'));
+    // geo: otvara podrazumevanu mapu na telefonu -- OsmAnd, Organic Maps, Google
+    // Maps, sta je vec podeseno. Samo pin, bez poligona: nijedna mapa ne prima
+    // geometriju kroz URL.
+    //
+    // Na racunaru geo: ne radi nista, pa se dugme tamo i ne prikazuje. Merilo je
+    // "grub" pokazivac -- prst, ne mis.
+    if(izgeo){
+      // Kosa crta u broju parcele ostaje kakva jeste -- neke mape %2F prikazu doslovno.
+      var ime=encodeURIComponent('Parcela '+el.getAttribute('data-p')).replace(/%2F/g,'/');
+      izgeo.href='geo:'+el.getAttribute('data-lat')+','+el.getAttribute('data-lon')+
+        '?q='+el.getAttribute('data-lat')+','+el.getAttribute('data-lon')+'('+ime+')';
+      izgeo.hidden=!naTelefonu;
+    }
     izkopiraj.textContent='Kopiraj';
     izbor.hidden=false;
   }
