@@ -1,6 +1,18 @@
 <!-- Traka "nova verzija". Stoji u dokumentu skrivena i pali je _includes/scripts.html
      kad service worker javi da nova verzija ceka. Markup je ovde, a ne sklopljen
      iz JavaScripta, da bi imao pravu strukturu i prevod na jednom mestu. -->
+<!-- Ponuda za instalaciju. Chrome na Androidu od 2021. ne izbacuje traku sam --
+     stavka stoji zakopana pod ⋮ "Instaliraj aplikaciju", gde je niko ne nadje.
+     Ovo je isto to, samo vidljivo. Pali se tek kad pregledac javi da je sajt
+     zaista instalabilan (beforeinstallprompt), pa se ne nudi uzalud. -->
+<div class="obavestenje" id="obavestenje-instalacija" hidden role="status" aria-live="polite">
+  <p class="obavestenje-tekst">Dodaj sajt na početni ekran — plan radi i bez signala.</p>
+  <div class="obavestenje-dugmad">
+    <button type="button" id="obavestenje-instaliraj" class="obavestenje-glavno">Instaliraj</button>
+    <button type="button" id="obavestenje-ne-treba" class="obavestenje-sporedno">Ne treba</button>
+  </div>
+</div>
+
 <div class="obavestenje" id="obavestenje-verzija" hidden role="status" aria-live="polite">
   <p class="obavestenje-tekst">Nova verzija sajta je spremna.</p>
   <div class="obavestenje-dugmad">

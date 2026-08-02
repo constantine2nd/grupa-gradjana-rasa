@@ -30,9 +30,22 @@ const NASI_KESOVI = [KES_LJUSKA, KES_STRANICE, KES_SLIKE];
 const OFFLINE = '{{ "/offline.html" | relative_url }}';
 const MAX_SLIKA = 40;
 
-const PRECACHE = [
+// Spisak je podeljen na dvoje jer install KOCI aktivaciju: dok se ne zavrsi,
+// service worker ne preuzima stranicu, a dok je stranica ne preuzme, Chrome je
+// ne smatra instalabilnom i ne nudi "Instaliraj aplikaciju". Kad je ovde stajalo
+// svih 630 KB, prva poseta sa slabog signala bila je potrosena uzalud.
+//
+// ODMAH je ono bez cega offline nema smisla -- 22 KB, aktivacija za sekundu.
+// offline.html nosi svoj CSS u sebi, pa mu main.css ne treba.
+const PRECACHE_ODMAH = [
   '{{ "/" | relative_url }}',
   OFFLINE,
+  '{{ "/assets/icons/icon-192.png" | relative_url }}',
+];
+
+// POSLE se dovlaci u pozadini, kad je service worker vec aktivan i stranica
+// odavno prikazana. Ako se prekine, sledeca poseta nastavlja.
+const PRECACHE_POSLE = [
   // Katastarski plan -- jedina stranica koju neko stvarno otvara u ataru,
   // gde signala nema. Zbog nje sve ovo i postoji.
   '{{ "/inicijativa-za-asfaltiranje-puta-i-opticki-internet.html" | relative_url }}',
@@ -42,34 +55,45 @@ const PRECACHE = [
   '{{ "/assets/vendor/bootstrap/js/bootstrap.bundle.min.js" | relative_url }}',
   '{{ "/assets/vendor/startbootstrap-clean-blog/js/scripts.js" | relative_url }}',
   // Samo uspravni rezovi. Kurziv se koristi retko (citat, potpis ispod slike)
-  // i sacekace da ga runtime kes pokupi -- 146 KB manje na prvoj poseti,
-  // a bas ta poseta je najcesce sa telefona na slabom signalu.
+  // i sacekace da ga runtime kes pokupi.
   '{{ "/assets/fonts/lora-latin.woff2" | relative_url }}',
   '{{ "/assets/fonts/lora-latin-ext.woff2" | relative_url }}',
   '{{ "/assets/fonts/opensans-latin.woff2" | relative_url }}',
   '{{ "/assets/fonts/opensans-latin-ext.woff2" | relative_url }}',
-  '{{ "/assets/icons/icon-192.png" | relative_url }}',
   '{{ "/assets/icons/favicon.svg" | relative_url }}',
 ];
 
 // ---------- instalacija ----------
 
+// Dodaje spisak stavku po stavku, ne kroz addAll -- addAll odbacuje ceo posao
+// ako jedan fajl vrati 404, pa bi jedan preimenovan fajl obarao instalaciju.
+async function dodaj(spisak) {
+  const kes = await caches.open(KES_LJUSKA);
+  const ishodi = await Promise.allSettled(
+    spisak.map((u) => kes.add(new Request(u, { cache: 'reload' })))
+  );
+  const pali = ishodi
+    .map((r, i) => (r.status === 'rejected' ? spisak[i] : null))
+    .filter(Boolean);
+  if (pali.length) console.warn('Precache promasio:', pali);
+}
+
 self.addEventListener('install', (e) => {
-  e.waitUntil((async () => {
-    const kes = await caches.open(KES_LJUSKA);
-    const ishodi = await Promise.allSettled(
-      PRECACHE.map((u) => kes.add(new Request(u, { cache: 'reload' })))
-    );
-    const pali = ishodi
-      .map((r, i) => (r.status === 'rejected' ? PRECACHE[i] : null))
-      .filter(Boolean);
-    if (pali.length) console.warn('Precache promasio:', pali);
-    // Namerno BEZ skipWaiting. Nova verzija ceka dok je stranica ne pusti,
-    // da se resursi ne bi zamenili nekome usred citanja. Stranica pokaze traku
-    // "nova verzija" i tek na klik posalje 'preuzmi-odmah'. Ako niko ne klikne,
-    // preuzme sama kad se zatvore sve kartice sa sajtom.
-  })());
+  // Namerno BEZ skipWaiting. Nova verzija ceka dok je stranica ne pusti, da se
+  // resursi ne bi zamenili nekome usred citanja. Stranica pokaze traku "nova
+  // verzija" i tek na klik posalje 'preuzmi-odmah'. Ako niko ne klikne, preuzme
+  // sama kad se zatvore sve kartice sa sajtom.
+  e.waitUntil(dodaj(PRECACHE_ODMAH));
 });
+
+// Ostatak ljuske, u pozadini. Kreve se iz prvog fetch-a a ne iz activate, jer
+// waitUntil u activate opet odlaze preuzimanje stranice -- tacno ono sto se
+// izbegava. Iz fetch-a je bezbedno: waitUntil drzi worker u zivotu dok traje.
+let zagrevanje = null;
+function zagrej() {
+  if (!zagrevanje) zagrevanje = dodaj(PRECACHE_POSLE).catch(() => {});
+  return zagrevanje;
+}
 
 self.addEventListener('activate', (e) => {
   e.waitUntil((async () => {
@@ -141,6 +165,8 @@ self.addEventListener('fetch', (e) => {
   // Tudji domeni prolaze netaknuti: analitika, kontakt forma. Njihovi odgovori
   // su neprozirni, ne moze im se ni proveriti status, a kes bi trosili naslepo.
   if (url.origin !== self.location.origin) return;
+
+  if (!zagrevanje) e.waitUntil(zagrej());
 
   if (req.mode === 'navigate') {
     e.respondWith(

@@ -22,6 +22,9 @@
 
     function ponudi(radnik) {
       if (!traka || !radnik) return;
+      // Nikad dve trake jedna preko druge; nadogradnja je preca.
+      var ti = document.getElementById('obavestenje-instalacija');
+      if (ti) ti.hidden = true;
       traka.hidden = false;
       document.getElementById('obavestenje-osvezi').onclick = function () {
         traka.hidden = true;
@@ -31,6 +34,40 @@
         traka.hidden = true;
       };
     }
+
+    // --- ponuda za instalaciju ---
+    // Pregledac javi beforeinstallprompt samo ako je sajt stvarno instalabilan.
+    // Hvatamo ga, gasimo podrazumevano ponasanje i cuvamo za nas dugme, da covek
+    // ne mora da trazi stavku pod ⋮.
+    var trakaInstal = document.getElementById('obavestenje-instalacija');
+    var ponuda = null;
+    var ODBIO = 'gg-rasa-ne-nudi-instalaciju';
+
+    window.addEventListener('beforeinstallprompt', function (ev) {
+      ev.preventDefault();
+      ponuda = ev;
+      try { if (localStorage.getItem(ODBIO)) return; } catch (err) {}
+      if (!trakaInstal || (traka && !traka.hidden)) return;   // ne dve trake odjednom
+      trakaInstal.hidden = false;
+    });
+
+    if (trakaInstal) {
+      document.getElementById('obavestenje-instaliraj').onclick = function () {
+        trakaInstal.hidden = true;
+        if (!ponuda) return;
+        ponuda.prompt();
+        ponuda.userChoice.then(function () { ponuda = null; });
+      };
+      document.getElementById('obavestenje-ne-treba').onclick = function () {
+        trakaInstal.hidden = true;
+        try { localStorage.setItem(ODBIO, '1'); } catch (err) {}
+      };
+    }
+
+    window.addEventListener('appinstalled', function () {
+      if (trakaInstal) trakaInstal.hidden = true;
+      ponuda = null;
+    });
 
     // Kad nova verzija preuzme kontrolu, stranica se osvezava jednom.
     navigator.serviceWorker.addEventListener('controllerchange', function () {
