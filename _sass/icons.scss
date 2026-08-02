@@ -1,0 +1,32 @@
+// Inline SVG ikonice, umesto Font Awesome kita sa CDN-a.
+//
+// Kit je bio 1,3 MB JavaScripta zbog osam ikonica. Sprite u _includes/icons.svg
+// je 5,7 KB i ide u sam dokument, pa nema ni zahteva ni treptaja.
+//
+// Reprodukuje se izgled starog `fa-stack fa-lg`: pun krug u boji teksta, sa
+// ikonicom izbijenom u beloj. `currentColor` znaci da hover na linku i dalje
+// prebacuje krug na $primary, kao i pre.
+
+.icon {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+    vertical-align: -0.125em;
+}
+
+.icon-stack {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.66em;
+    height: 2.66em;
+    border-radius: 50%;
+    background: currentColor;
+
+    .icon {
+        width: 1.33em;
+        height: 1.33em;
+        fill: $white;
+        vertical-align: 0;
+    }
+}

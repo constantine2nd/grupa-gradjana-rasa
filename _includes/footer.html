@@ -9,70 +9,63 @@
         <ul class="list-inline text-center">
           {% if site.email %}
           <li class="list-inline-item">
-            <a href="mailto:{{ site.email | encode_email }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="far fa-envelope fa-stack-1x fa-inverse"></i>
+            <a href="mailto:{{ site.email | encode_email }}" aria-label="Pošalji e-poštu">
+              <span class="icon-stack">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-envelope"></use></svg>
               </span>
             </a>
           </li>
           {% endif %}
           {% if site.twitter_username %}
           <li class="list-inline-item">
-            <a href="https://x.com/{{ site.twitter_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-x-twitter fa-stack-1x fa-inverse"></i> <!-- Updated Icon -->
+            <a href="https://x.com/{{ site.twitter_username }}" aria-label="X profil">
+              <span class="icon-stack">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-x-twitter"></use></svg>
               </span>
             </a>
           </li>
           {% endif %}
           {% if site.facebook_username %}
           <li class="list-inline-item">
-            <a href="https://www.facebook.com/{{ site.facebook_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+            <a href="https://www.facebook.com/{{ site.facebook_username }}" aria-label="Facebook stranica">
+              <span class="icon-stack">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-facebook-f"></use></svg>
               </span>
             </a>
           </li>
           {% endif %}
           {% if site.linkedin_username %}
           <li class="list-inline-item">
-            <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+            <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}" aria-label="LinkedIn profil">
+              <span class="icon-stack">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-linkedin"></use></svg>
               </span>
             </a>
           </li>
           {% endif %}
           {% if site.github_username %}
           <li class="list-inline-item">
-            <a href="https://github.com/{{ site.github_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+            <a href="https://github.com/{{ site.github_username }}" aria-label="GitHub nalog">
+              <span class="icon-stack">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-github"></use></svg>
               </span>
             </a>
           </li>
           {% endif %}
           {% if site.viber_invite %}
           <li class="list-inline-item">
-            <a href="{{ site.viber_invite }}" target="_blank" rel="noopener" title="Viber grupa">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-viber fa-stack-1x fa-inverse"></i>
+            <a href="{{ site.viber_invite }}" target="_blank" rel="noopener" title="Viber grupa" aria-label="Viber grupa">
+              <span class="icon-stack">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-viber"></use></svg>
               </span>
             </a>
           </li>
           {% endif %}
           {% if site.instagram_username %}
           <li class="list-inline-item">
-            <a href="https://instagram.com/{{ site.instagram_username }}">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+            <a href="https://instagram.com/{{ site.instagram_username }}" aria-label="Instagram profil">
+              <span class="icon-stack">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-instagram"></use></svg>
               </span>
             </a>
           </li>

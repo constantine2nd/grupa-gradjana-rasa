@@ -13,10 +13,11 @@
 
   <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
 
-  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-
-  <script src="https://use.fontawesome.com/releases/v6.4.2/js/all.js" crossorigin="anonymous"></script>
+  <!-- Fontovi stoje kod nas (assets/fonts), ne na fonts.googleapis.com. Preload
+       ide samo za dva reza koja se vide odmah; ostale @font-face pravila povuku
+       tek ako zatrebaju. Ikonice su inline SVG sprite, vidi _includes/icons.svg. -->
+  <link rel="preload" href="{{ "/assets/fonts/opensans-latin.woff2" | relative_url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ "/assets/fonts/lora-latin.woff2" | relative_url }}" as="font" type="font/woff2" crossorigin>
 
   <link rel="stylesheet" href="{{"/assets/main.css" | relative_url }}">
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
