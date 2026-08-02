@@ -1,0 +1,86 @@
+// Traka koja javlja da je nova verzija spremna.
+//
+// Stoji dole, preko cele sirine na telefonu i kao kartica na siroj slici. Ne
+// preklapa sadrzaj koji se cita i ne otima fokus -- covek je slobodan da je
+// ignorise, jer stara verzija i dalje radi.
+
+.obavestenje {
+    position: fixed;
+    z-index: 1040;                 // ispod modala Bootstrapa (1050)
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    padding: 14px 18px;
+    background: $gray-900;
+    color: $white;
+    border-radius: 3px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+    font-family: $headings-font-family;
+    font-size: 15px;
+    line-height: 1.4;
+
+    &[hidden] {
+        display: none;             // [hidden] ne pobedjuje display:flex samo od sebe
+    }
+
+    @media (min-width: 576px) {
+        left: auto;
+        right: 24px;
+        bottom: 24px;
+        max-width: 30rem;
+    }
+}
+
+.obavestenje-tekst {
+    margin: 0;
+    max-width: none;
+}
+
+.obavestenje-dugmad {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.obavestenje button {
+    font-family: $headings-font-family;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.obavestenje-glavno {
+    background: $primary;
+    color: $white;
+
+    &:hover,
+    &:focus {
+        background: darken($primary, 8%);
+    }
+}
+
+.obavestenje-sporedno {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+
+    &:hover,
+    &:focus {
+        color: $white;
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+}
+
+.obavestenje button:focus-visible {
+    outline: 2px solid $white;
+    outline-offset: 2px;
+}

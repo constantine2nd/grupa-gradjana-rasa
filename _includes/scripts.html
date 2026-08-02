@@ -5,15 +5,65 @@
 
 <!-- Service worker. Opseg je {{ "/" | relative_url }} jer sajt stoji u
      poddirektorijumu -- sw.js mora da bude u tom istom direktorijumu da bi
-     smeo da ga kontrolise. -->
+     smeo da ga kontrolise.
+
+     Nova verzija ne preuzima sama od sebe (sw.js vise ne zove skipWaiting).
+     Ceka, javi se trakom, i menja se tek na klik -- da se resursi ne bi
+     zamenili nekome usred citanja. -->
 <script>
-  if ('serviceWorker' in navigator) {
+  (function () {
+    if (!('serviceWorker' in navigator)) return;
+
+    var traka = document.getElementById('obavestenje-verzija');
+    // Ako je stranica vec pod kontrolom, svaka nova verzija je nadogradnja.
+    // Ako nije, ovo je prva instalacija -- tu nema sta da se osvezava.
+    var bioKontrolor = !!navigator.serviceWorker.controller;
+    var osvezava = false;
+
+    function ponudi(radnik) {
+      if (!traka || !radnik) return;
+      traka.hidden = false;
+      document.getElementById('obavestenje-osvezi').onclick = function () {
+        traka.hidden = true;
+        radnik.postMessage('preuzmi-odmah');
+      };
+      document.getElementById('obavestenje-kasnije').onclick = function () {
+        traka.hidden = true;
+      };
+    }
+
+    // Kad nova verzija preuzme kontrolu, stranica se osvezava jednom.
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (!bioKontrolor || osvezava) return;
+      osvezava = true;
+      window.location.reload();
+    });
+
     window.addEventListener('load', function () {
       navigator.serviceWorker
         .register('{{ "/sw.js" | relative_url }}', { scope: '{{ "/" | relative_url }}' })
+        .then(function (reg) {
+          if (reg.waiting && bioKontrolor) ponudi(reg.waiting);
+
+          reg.addEventListener('updatefound', function () {
+            var novi = reg.installing;
+            if (!novi) return;
+            novi.addEventListener('statechange', function () {
+              if (novi.state === 'installed' && bioKontrolor) ponudi(novi);
+            });
+          });
+
+          // Kartica ume da stoji otvorena danima. Provera pri svakom povratku
+          // na nju, da nadogradnja ne ceka sledecu navigaciju.
+          document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') {
+              reg.update().catch(function () {});
+            }
+          });
+        })
         .catch(function (e) { console.warn('Service worker nije registrovan:', e); });
     });
-  }
+  })();
 </script>
 
 {% if page.url contains 'contact' %}

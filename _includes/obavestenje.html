@@ -1,0 +1,11 @@
+<!-- Traka "nova verzija". Stoji u dokumentu skrivena i pali je _includes/scripts.html
+     kad service worker javi da nova verzija ceka. Markup je ovde, a ne sklopljen
+     iz JavaScripta, da bi imao pravu strukturu i prevod na jednom mestu. -->
+<div class="obavestenje" id="obavestenje-verzija" hidden role="status" aria-live="polite">
+  <p class="obavestenje-tekst">Nova verzija sajta je spremna.</p>
+  <div class="obavestenje-dugmad">
+    <button type="button" id="obavestenje-osvezi" class="obavestenje-glavno">Osveži</button>
+    <button type="button" id="obavestenje-kasnije" class="obavestenje-sporedno"
+            aria-label="Zatvori obaveštenje">Kasnije</button>
+  </div>
+</div>

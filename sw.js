@@ -64,7 +64,10 @@ self.addEventListener('install', (e) => {
       .map((r, i) => (r.status === 'rejected' ? PRECACHE[i] : null))
       .filter(Boolean);
     if (pali.length) console.warn('Precache promasio:', pali);
-    await self.skipWaiting();
+    // Namerno BEZ skipWaiting. Nova verzija ceka dok je stranica ne pusti,
+    // da se resursi ne bi zamenili nekome usred citanja. Stranica pokaze traku
+    // "nova verzija" i tek na klik posalje 'preuzmi-odmah'. Ako niko ne klikne,
+    // preuzme sama kad se zatvore sve kartice sa sajtom.
   })());
 });
 
