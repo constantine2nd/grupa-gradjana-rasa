@@ -284,8 +284,10 @@ Računska podloga za dogovor, ne geodetski elaborat.</description>
         sys.exit(f'spajanje nije proslo: {ps:.1f} umesto {ocekivano:.1f} m²')
     upisano_novo = G[sused]['povrsina'] + pt * G[broj]['povrsina'] / uk
 
-    dest2 = os.path.join(os.path.dirname(dest) or '.',
-                         f'{sused.replace("/", "-")}-posle-pripajanja.kml')
+    # ime se izvodi iz -o, ne samo iz broja suseda: inace dve varijante iste
+    # podele pisu preko istog fajla i druga tiho pojede prvu
+    koren = os.path.splitext(dest)[0]
+    dest2 = f'{koren}-{sused.replace("/", "-")}-spojeno.kml'
     doc2 = f'''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
