@@ -118,6 +118,85 @@ def podeli(parcela, sused, cilj_ostatka, rez='popreko'):
     return odseceno, ostatak, u, n, medja
 
 
+def _orijentisi(p):
+    """Prsten u smeru suprotnom od kazaljke, bez ponovljenog poslednjeg temena."""
+    m = p[:-1] if p[0] == p[-1] else p[:]
+    s = sum(m[i][0] * m[(i + 1) % len(m)][1] - m[(i + 1) % len(m)][0] * m[i][1]
+            for i in range(len(m)))
+    return m if s > 0 else m[::-1]
+
+
+def _na_duzi(p, a, b, tol):
+    """Je li p na duzi ab (a nije ni jedan od krajeva)?"""
+    if math.dist(p, a) < tol or math.dist(p, b) < tol:
+        return False
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    d = math.hypot(dx, dy)
+    if d == 0:
+        return False
+    t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (d * d)
+    if not (0 < t < 1):
+        return False
+    return math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy)) < tol
+
+
+def _unodi(a, b, tol):
+    """Ubaci u prsten a svako teme prstena b koje lezi na nekoj ivici a."""
+    out = []
+    for i in range(len(a)):
+        p, q = a[i], a[(i + 1) % len(a)]
+        out.append(p)
+        usput = [v for v in b if _na_duzi(v, p, q, tol)]
+        usput.sort(key=lambda v: math.dist(p, v))
+        out.extend(usput)
+    return out
+
+
+def spoji(a, b, tol=0.05):
+    """Unija dva poligona koji dele deo granice.
+
+    Radi ponistavanjem zajednickih ivica: ako obe strane obidjemo u istom
+    smeru, zajednicka ivica se u jednom poligonu javlja kao (p,q), a u drugom
+    kao (q,p). Sto ostane, spaja se u prsten.
+
+    Pre toga se ivice "unode" -- rez pravi teme na sredini medje koje sused
+    nema, pa se ivice ne bi poklopile.
+    """
+    a, b = _orijentisi(a), _orijentisi(b)
+    a, b = _unodi(a, b, tol), _unodi(b, a, tol)
+
+    def kljuc(p):
+        return (round(p[0] / tol), round(p[1] / tol))
+
+    ivice = {}
+    for prsten in (a, b):
+        for i in range(len(prsten)):
+            p, q = prsten[i], prsten[(i + 1) % len(prsten)]
+            ivice[(kljuc(p), kljuc(q))] = (p, q)
+
+    ostale = {k: v for k, v in ivice.items() if (k[1], k[0]) not in ivice}
+    if not ostale:
+        sys.exit('poligoni se poklapaju, nema sta da se spoji')
+
+    veza = {}
+    for (kp, kq), (p, q) in ostale.items():
+        veza.setdefault(kp, []).append((kq, p, q))
+
+    start = next(iter(ostale))[0]
+    prsten, k = [], start
+    while True:
+        if k not in veza or not veza[k]:
+            sys.exit('granica se ne zatvara -- poligoni verovatno ne dele medju')
+        kq, p, q = veza[k].pop()
+        prsten.append(p)
+        k = kq
+        if k == start:
+            break
+        if len(prsten) > len(a) + len(b) + 4:
+            sys.exit('spajanje ne konvergira')
+    return prsten + [prsten[0]]
+
+
 def placemark(ime, prsten, opis, stil):
     koord = kml_prsten(','.join(f'{x} {y}' for x, y in prsten))
     return (f'  <Placemark>\n'
@@ -196,3 +275,31 @@ Računska podloga za dogovor, ne geodetski elaborat.</description>
     os.makedirs(os.path.dirname(dest) or '.', exist_ok=True)
     open(dest, 'w', encoding='utf-8').write(doc)
     print(f'\n{os.path.abspath(dest)}  ({len(doc)} B)')
+
+    # --- sused posle pripajanja, kao jedan poligon ---
+    spojeno = spoji(S, odseceno)
+    ps = povrsina(spojeno)
+    ocekivano = povrsina(S) + pt
+    if abs(ps - ocekivano) > 0.5:
+        sys.exit(f'spajanje nije proslo: {ps:.1f} umesto {ocekivano:.1f} m²')
+    upisano_novo = G[sused]['povrsina'] + pt * G[broj]['povrsina'] / uk
+
+    dest2 = os.path.join(os.path.dirname(dest) or '.',
+                         f'{sused.replace("/", "-")}-posle-pripajanja.kml')
+    doc2 = f'''<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Parcela {sused} posle pripajanja — Raša</name>
+  <description>{G[sused]["povrsina"]} m² + {pt:.0f} m² sa parcele {broj}.
+Računska podloga za dogovor, ne geodetski elaborat.</description>
+  <Style id="spojeno"><LineStyle><color>ff3c8c2f</color><width>3</width></LineStyle>
+<PolyStyle><color>663c8c2f</color></PolyStyle></Style>
+{placemark(f"Parcela {sused} — posle pripajanja", spojeno[:-1],
+           f"{ps:.0f} m² geometrijski, oko {upisano_novo:.0f} m² po upisanoj meri "
+           f"({G[sused]['povrsina']} + {pt:.0f} sa {broj})", "spojeno")}
+</Document>
+</kml>
+'''
+    open(dest2, 'w', encoding='utf-8').write(doc2)
+    print(f'{os.path.abspath(dest2)}  ({len(doc2)} B)')
+    print(f'  spojeno {ps:.1f} m² = {povrsina(S):.1f} + {pt:.1f}   temena: {len(spojeno) - 1}')
