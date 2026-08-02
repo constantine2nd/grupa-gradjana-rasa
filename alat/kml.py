@@ -20,7 +20,6 @@ import json, os, sys
 from koordinate import u_wgs84
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-os.chdir(HERE)
 
 # KML boje su aabbggrr, ne rrggbb. Ovo je #0085A1 sa sajta.
 POPUNA = '660085A1'[:2] + 'A18500'      # 66 = oko 40% neprovidnosti
@@ -83,36 +82,39 @@ def placemark(broj, rec):
             f'  </Placemark>')
 
 
-args = [a for a in sys.argv[1:]]
-dest = 'alat/_izlaz/parcele.kml'
-if '-o' in args:
-    i = args.index('-o')
-    dest = args[i + 1]
-    del args[i:i + 2]
-else:
-    dest = '_izlaz/parcele.kml'
+if __name__ == '__main__':
+    os.chdir(HERE)
 
-G = json.load(open('geoms.json', encoding='utf-8'))
+    args = [a for a in sys.argv[1:]]
+    dest = 'alat/_izlaz/parcele.kml'
+    if '-o' in args:
+        i = args.index('-o')
+        dest = args[i + 1]
+        del args[i:i + 2]
+    else:
+        dest = '_izlaz/parcele.kml'
 
-if '--spisak' in args:
-    ns = __import__('runpy').run_path('spisak.py')
-    brojevi = sorted({p for _, ps, _ in ns['OWNERS'] for p in ps})
-else:
-    brojevi = args
+    G = json.load(open('geoms.json', encoding='utf-8'))
 
-if not brojevi:
-    sys.exit(__doc__)
+    if '--spisak' in args:
+        ns = __import__('runpy').run_path('spisak.py')
+        brojevi = sorted({p for _, ps, _ in ns['OWNERS'] for p in ps})
+    else:
+        brojevi = args
 
-nema = [b for b in brojevi if b not in G]
-if nema:
-    print('nema u geoms.json:', ', '.join(nema), file=sys.stderr)
-    print('  (ako su van preuzetih opsega, dodati opseg u fetchgeom.py)', file=sys.stderr)
-brojevi = [b for b in brojevi if b in G]
-if not brojevi:
-    sys.exit('nijedna parcela nije nadjena')
+    if not brojevi:
+        sys.exit(__doc__)
 
-telo = '\n'.join(placemark(b, G[b]) for b in brojevi)
-doc = f'''<?xml version="1.0" encoding="UTF-8"?>
+    nema = [b for b in brojevi if b not in G]
+    if nema:
+        print('nema u geoms.json:', ', '.join(nema), file=sys.stderr)
+        print('  (ako su van preuzetih opsega, dodati opseg u fetchgeom.py)', file=sys.stderr)
+    brojevi = [b for b in brojevi if b in G]
+    if not brojevi:
+        sys.exit('nijedna parcela nije nadjena')
+
+    telo = '\n'.join(placemark(b, G[b]) for b in brojevi)
+    doc = f'''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document>
   <name>Parcele — Raša, KO Sremski Karlovci</name>
@@ -126,9 +128,9 @@ doc = f'''<?xml version="1.0" encoding="UTF-8"?>
 </kml>
 '''
 
-os.makedirs(os.path.dirname(dest) or '.', exist_ok=True)
-open(dest, 'w', encoding='utf-8').write(doc)
+    os.makedirs(os.path.dirname(dest) or '.', exist_ok=True)
+    open(dest, 'w', encoding='utf-8').write(doc)
 
-print(os.path.abspath(dest))
-print(f'  parcela: {len(brojevi)}  ({", ".join(brojevi)})')
-print(f'  {len(doc)} B')
+    print(os.path.abspath(dest))
+    print(f'  parcela: {len(brojevi)}  ({", ".join(brojevi)})')
+    print(f'  {len(doc)} B')
